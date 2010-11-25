@@ -1,0 +1,71 @@
+
+MAIN_DIR = ../
+SCHED_DIR = ../sched
+UTILS_DIR = ../utils
+INCLUDE_DIR = ../include
+DATA_DIR = $(MAIN_DIR)/data
+
+APP_NAME=simulator
+
+schedulers = $(SCHED_DIR)/rm_global_sched.o\
+	$(SCHED_DIR)/edf_global_sched.o\
+	$(SCHED_DIR)/fifo_global_sched.o\
+	$(SCHED_DIR)/edf_deadlines_global_sched.o\
+	$(SCHED_DIR)/rm_deadlines_global_sched.o
+
+objects = $(UTILS_DIR)/task_lists.o\
+	$(UTILS_DIR)/sched_events.o\
+	$(UTILS_DIR)/processor_lists.o\
+	$(UTILS_DIR)/trace_event.o\
+	$(UTILS_DIR)/rm_nf_ll.o\
+
+app = $(objects) $(schedulers) main
+#includes = $(INCLUDE_DIR)/task.h $(INCLUDE_DIR)/processor.h $(INCLUDE_DIR)/sched_event.h
+includes = $(INCLUDE_DIR)/*.h
+
+all : $(app)
+
+
+main : $(schedulers) $(objects) $(includes)
+	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm
+
+rm_global_sched.o : $(objects) $(includes)
+	cc -c $(SCHED_DIR)/rm_global_sched.c
+
+edf_global_sched.o : $(objects) $(includes)
+	cc -c $(SCHED_DIR)/edf_global_sched.c
+
+fifo_global_sched.o : $(objects) $(includes)
+	cc -c $(SCHED_DIR)/fifo_global_sched.c
+
+edf_deadlines_global_sched.o : $(objects) $(includes)
+	cc -c $(SCHED_DIR)/edf_deadlines_global_sched.c
+
+rm_deadlines_global_sched.o : $(objects) $(includes)
+	cc $(SCHED_DIR)/rm_deadlines_global_sched.c
+
+$(UTILS_DIR)/task_lists.o :$(UTILS_DIR)/task_lists.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c task_lists.c
+
+$(UTILS_DIR)/processor_lists.o : $(UTILS_DIR)/processor_lists.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c processor_lists.c
+
+$(UTILS_DIR)/sched_events.o : $(UTILS_DIR)/sched_events.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c sched_events.c
+
+$(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c trace_event.c
+
+$(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c rm_nf_ll.c
+
+clean :
+	-rm $(objects) $(schedulers)
+
+installer : $(app)
+	mkdir $(APP_NAME)
+	mkdir ./$(APP_NAME)/examples
+	cp $(APP_NAME).run ./$(APP_NAME)
+	cp $(DATA_DIR)/* ./$(APP_NAME)/examples
+	makeself --notemp ./$(APP_NAME)/ $(APP_NAME)_installer.run "Simulator" echo "Done"
+	rm -rf $(APP_NAME)/
