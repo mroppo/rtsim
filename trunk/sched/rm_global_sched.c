@@ -71,8 +71,39 @@ typedef enum
 }RM_PARAMS;
 
 
-int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basename_trace)
+#ifdef USE_THREAD
+
+pthread_mutex_t rm_mutex; 
+int rm_active_threads;
+
+typedef struct {
+	int mode;
+	int no_proc;
+	double max_time;
+	task_set_t *task;
+	char* outfile;
+}rm_thread_args;
+
+void* start_rm(void* params)
+#else
+int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* outfile)
+#endif
 {
+
+
+#ifdef USE_THREAD
+	pthread_mutex_lock(rm_mutex); 
+		rm_active_threads ++;
+	pthread_mutex_unlock(rm_mutex); 
+	rm_thread_args* rm_params = (rm_thread_args*)params;
+
+	int mode		= rm_params->mode;
+	int no_proc		= rm_params->no_proc;
+	double max_time = rm_params->max_time;
+	task_set_t *t	= rm_params->task;
+	char* outfile	= rm_params->outfile;
+#endif
+
 	processor_t *p = NULL; /* Head of processor's list */
 	sched_event_t *event_list = NULL; /* Head of scheduling events list */
 	sched_event_t *missed_deadlines = NULL; /* Head of missed deadlines events list */
@@ -84,10 +115,6 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basena
 	double current_time;
 	float util; /* system's total utilization  */
 	int no_task;
-
-
-
-
 	
 
 	int i;//, task_not_assigned;
@@ -111,7 +138,7 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basena
 	////////////// tracer
 	int file_id = 0;
 	char file_trace[255];
-	//char basename_trace[255];
+	char basename_trace[255];
 
 	trace_event new_trace_event;
 	new_trace_event.next = NULL;
@@ -120,6 +147,7 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basena
 
 
 
+	strcpy(basename_trace, outfile);
 	
 	/// Create processor's list
 	for (i = 0; i < no_proc; i++) {
@@ -518,8 +546,9 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basena
 				}// end task to execute found
 			} //end if exist more events
 		}/// END SUSPEND_TASK
+		break;
 #endif
-			break;
+		
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -864,12 +893,26 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basena
 	}
 	////////////////////////////////////////////////////////
 #endif
+
+#ifdef USE_THREAD
+	pthread_mutex_lock(rm_mutex); 
+		rm_active_threads--;
+	pthread_mutex_unlock(rm_mutex); 
+#endif
 	//printf("Scheduling activities finished at current time = %.2f\n", current_time);
 	return(no_proc);
 
 }
+
+
+
+
 int start_rm_main(int argc, char *argv[], int argid)
 {
+#ifdef USE_THREAD
+	pthread_t thread_task;
+	rm_thread_args args;
+#endif
 	sched_event_t new_event;
 	task_set_t *t = NULL; /* Head of task set's list */
 	task_set_t *current_task = NULL; /* Head of task set's list */
@@ -983,6 +1026,10 @@ int start_rm_main(int argc, char *argv[], int argid)
 
 	}else if(mode == 1)		//partial mode
 	{
+
+#ifdef USE_THREAD
+		pthread_mutex_init (&rm_mutex, NULL); 
+#endif
 		res = 0;
 		list = start_rm_nf_ll(1, argv[argid + PARAM_FILE]);
 
@@ -1027,12 +1074,28 @@ int start_rm_main(int argc, char *argv[], int argid)
 			}
 
 			sprintf(&partialname, "%s_partial%d",basename_trace,current_processor->id);
+#ifdef USE_THREAD
+			args.mode		= mode;
+			args.no_proc	= 1;
+			args.max_time	= max_time;
+			args.task		= t;
+			args.outfile	= partialname;
+
+			res = pthread_create(&thread_task, NULL, start_rm, args);
+
+			if( res != 0)
+				printf(" Error no se pudo crear el hilo");
+#else
 			res += start_rm(mode, 1, max_time, t, partialname);
+#endif
 			current_processor = current_processor->next;
 		}
-
-		
 	}
+#ifdef USE_THREAD
+	//wait for finish threads
+	while(rm_active_threads != 0); {}
+#endif
+
 
 	return res;
 }

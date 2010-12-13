@@ -1,7 +1,10 @@
+#include "simulator.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
+#include "simulator.h"
 #include "task.h"
 #include "processor.h"
 #include "sched_event.h"

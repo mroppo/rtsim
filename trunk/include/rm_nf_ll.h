@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include "simulator.h"
 #include "task.h"
 #include "processor.h"
 

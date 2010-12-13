@@ -26,6 +26,7 @@
 #ifndef __PROCESSOR_H__
 #define __PROCESSOR_H__
 
+#include "simulator.h"
 #include "trace_event.h"
 
 #define PROCESSOR_IDLE  0

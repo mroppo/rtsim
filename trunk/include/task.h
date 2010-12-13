@@ -27,7 +27,7 @@
 #ifndef __TASK_H__
 #define __TASK_H__
 
-
+#include "simulator.h"
 #include <stdio.h>
 
 /* task sates */

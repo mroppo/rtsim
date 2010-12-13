@@ -1,6 +1,7 @@
 #ifndef __RM_DEADLINES_GLOBAL_SCHED_H__
 #define __RM_DEADLINES_GLOBAL_SCHED_H__
 
+#include "simulator.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>

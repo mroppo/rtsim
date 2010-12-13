@@ -28,6 +28,7 @@
 #define __SCHED_EVENT_H__
 
 
+#include "simulator.h"
 //order used as priority
 
 typedef enum {

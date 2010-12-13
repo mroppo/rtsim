@@ -169,6 +169,10 @@
 				RelativePath="..\main.c"
 				>
 			</File>
+			<File
+				RelativePath="..\include\main.h"
+				>
+			</File>
 			<Filter
 				Name="Sched"
 				>
@@ -177,7 +181,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\edf_deadlines_global_sched.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sched\edf_global_sched.c"
+					>
+				</File>
+				<File
+					RelativePath="..\include\edf_global_sched.h"
 					>
 				</File>
 				<File
@@ -185,11 +197,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\fifo_global_sched.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sched\rm_deadlines_global_sched.c"
 					>
 				</File>
 				<File
+					RelativePath="..\include\rm_deadlines_global_sched.h"
+					>
+				</File>
+				<File
 					RelativePath="..\sched\rm_global_sched.c"
+					>
+				</File>
+				<File
+					RelativePath="..\include\rm_global_sched.h"
 					>
 				</File>
 			</Filter>
@@ -201,6 +225,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\lists.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\processor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\utils\processor_lists.c"
 					>
 				</File>
@@ -209,7 +241,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\include\sched_event.h"
+					>
+				</File>
+				<File
 					RelativePath="..\utils\sched_events.c"
+					>
+				</File>
+				<File
+					RelativePath="..\include\task.h"
 					>
 				</File>
 				<File
@@ -220,57 +260,11 @@
 					RelativePath="..\utils\trace_event.c"
 					>
 				</File>
+				<File
+					RelativePath="..\include\trace_event.h"
+					>
+				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath="..\include\edf_deadlines_global_sched.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\edf_global_sched.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\fifo_global_sched.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\lists.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\main.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\processor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\rm_deadlines_global_sched.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\rm_global_sched.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\sched_event.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\task.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\trace_event.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

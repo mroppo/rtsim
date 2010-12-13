@@ -26,7 +26,7 @@
 #ifndef __TRACE_EVENT_H__
 #define __TRACE_EVENT_H__
 
-
+#include "simulator.h"
 #include <stdio.h>
 
 enum TEVENT {
