@@ -5,6 +5,7 @@ UTILS_DIR = ../utils
 INCLUDE_DIR = ../include
 DATA_DIR = $(MAIN_DIR)/data
 
+CC_OPT = -lpthread
 APP_NAME=simulator
 
 schedulers = $(SCHED_DIR)/rm_global_sched.o\
@@ -27,37 +28,37 @@ all : $(app)
 
 
 main : $(schedulers) $(objects) $(includes)
-	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm
+	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm $(CC_OPT)
 
 rm_global_sched.o : $(objects) $(includes)
-	cc -c $(SCHED_DIR)/rm_global_sched.c
+	cc -c $(SCHED_DIR)/rm_global_sched.c $(CC_OPT)
 
 edf_global_sched.o : $(objects) $(includes)
-	cc -c $(SCHED_DIR)/edf_global_sched.c
+	cc -c $(SCHED_DIR)/edf_global_sched.c $(CC_OPT)
 
 fifo_global_sched.o : $(objects) $(includes)
-	cc -c $(SCHED_DIR)/fifo_global_sched.c
+	cc -c $(SCHED_DIR)/fifo_global_sched.c $(CC_OPT)
 
 edf_deadlines_global_sched.o : $(objects) $(includes)
-	cc -c $(SCHED_DIR)/edf_deadlines_global_sched.c
+	cc -c $(SCHED_DIR)/edf_deadlines_global_sched.c $(CC_OPT)
 
 rm_deadlines_global_sched.o : $(objects) $(includes)
-	cc $(SCHED_DIR)/rm_deadlines_global_sched.c
+	cc $(SCHED_DIR)/rm_deadlines_global_sched.c $(CC_OPT)
 
 $(UTILS_DIR)/task_lists.o :$(UTILS_DIR)/task_lists.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c task_lists.c
+	@cd $(UTILS_DIR) ; cc -c task_lists.c $(CC_OPT)
 
 $(UTILS_DIR)/processor_lists.o : $(UTILS_DIR)/processor_lists.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c processor_lists.c
+	@cd $(UTILS_DIR) ; cc -c processor_lists.c $(CC_OPT)
 
 $(UTILS_DIR)/sched_events.o : $(UTILS_DIR)/sched_events.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c sched_events.c
+	@cd $(UTILS_DIR) ; cc -c sched_events.c $(CC_OPT)
 
 $(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c trace_event.c
+	@cd $(UTILS_DIR) ; cc -c trace_event.c $(CC_OPT)
 
 $(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c rm_nf_ll.c
+	@cd $(UTILS_DIR) ; cc -c rm_nf_ll.c $(CC_OPT)
 
 clean :
 	-rm $(objects) $(schedulers)
