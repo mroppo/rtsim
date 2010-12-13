@@ -684,7 +684,7 @@ int start_edf_main(int argc, char *argv[], int argid)
 			args.task	= t;
 			args.outfile	= partialname;
 
-			res = pthread_create(&thread_task, NULL, thread_start_rm, &args);
+			res = pthread_create(&thread_task, NULL, thread_start_edf, &args);
 
 			if( res != 0)
 				printf("\n Error no se pudo crear el hilo");
