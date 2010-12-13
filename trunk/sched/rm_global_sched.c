@@ -1106,9 +1106,3 @@ int start_rm_main(int argc, char *argv[], int argid)
 	printf("\n");
 	return res;
 }
-
-void print_rm_usage()
-{
-	fprintf(stderr, "\n RM params:");
-	fprintf(stderr, "\n   processors time tasks.txt\n");
-}

@@ -19,6 +19,7 @@ objects = $(UTILS_DIR)/task_lists.o\
 	$(UTILS_DIR)/processor_lists.o\
 	$(UTILS_DIR)/trace_event.o\
 	$(UTILS_DIR)/rm_nf_ll.o\
+	$(UTILS_DIR)/edf_nf.o
 
 app = $(objects) $(schedulers) main
 #includes = $(INCLUDE_DIR)/task.h $(INCLUDE_DIR)/processor.h $(INCLUDE_DIR)/sched_event.h
@@ -60,6 +61,8 @@ $(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
 $(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
 	@cd $(UTILS_DIR) ; cc -c rm_nf_ll.c $(CC_OPT)
 
+$(UTILS_DIR)/edf_nf.o : $(UTILS_DIR)/edf_nf.c $(includes)
+	@cd $(UTILS_DIR) ; cc -c edf_nf.c $(CC_OPT)
 clean :
 	-rm $(objects) $(schedulers)
 

@@ -60,32 +60,66 @@
 #define USE_TRACE_FILE
 //#define END_ON_MISS_DEADLINE
 
-int start_edf_main(int argc, char *argv[], int argid)
+
+typedef enum
 {
-	task_set_t *t = NULL; /* Head of task set's list */
+	PARAM_MODE=0,
+	PARAM_NOPROC,
+	PARAM_MAXTIME,
+	PARAM_FILE,
+	PARAM_COUNT,
+}EDF_PARAMS;
+
+
+#ifdef USE_THREAD
+
+pthread_mutex_t edf_mutex; 
+int edf_active_threads;
+
+typedef struct {
+	int mode;
+	int no_proc;
+	double max_time;
+	task_set_t *task;
+	char* outfile;
+}edf_thread_args;
+
+void* thread_start_edf(void* params)
+{
+	printf("\ncreating new thread ...");
+	edf_thread_args* edf_params = (edf_thread_args*)params;
+	int mode		= edf_params->mode;
+	int no_proc		= edf_params->no_proc;
+	double max_time = edf_params->max_time;
+	task_set_t *t	= edf_params->task;
+	char* outfile	= edf_params->outfile;
+	
+	start_edf(mode, no_proc, max_time, t, outfile);
+}
+#endif
+int start_edf(int mode, int no_proc, double max_time, task_set_t *t, char* outfile)
+
+{
 	processor_t *p = NULL; /* Head of processor's list */
-	sched_event_t *event = NULL; /* Head of scheduling events list */
+	sched_event_t *event_list = NULL; /* Head of scheduling events list */
 	sched_event_t *missed_deadlines = NULL; /* Head of missed deadlines events list */
 
-	int n; /* Number of tasks */
+//	int mode;
 	//int m; /* Number of processors */
-	double current_time, max_time;
+	double current_time;
 	float util; /* system's total utilization  */
+	int no_task;
 
 
-	FILE *in_file; /* Input file */
-
-	int no_proc, i;
+	int i;//, task_not_assigned;
 	int event_id = 0, deadln_miss_id = 0;
-	char line[80]; /* Input line */
-	float period, wcet;
-	task_set_t new_task; /* List pointers */
+	//char line[80]; /* Input line */
+//	float period, wcet, phase;
 	task_set_t *task_to_execute, *task_in_processor, *task_in_event, *preemptable_task;
 	processor_t new_processor;
 	sched_event_t new_event;
 	processor_t *current_processor, *preemptable_processor;
 
-	int no_task = 0;
 #ifdef USE_TRACE_FILE
 	////////////// tracer
 	int file_id = 0;
@@ -97,37 +131,14 @@ int start_edf_main(int argc, char *argv[], int argid)
 	///////////////////////////////
 #endif
 
-	/////////////////////////////////////// checking params
-	if (argc != 3) {
-		fprintf(stderr, "\nYou must supply the number of processors, simulation time (0 = lcm) and a file name with the task set parameters (see README file for details)\n");
-		return -1;
-	}
-
-	no_proc = atoi(argv[argid]);
-	if (no_proc <= 0) {
-		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", argv[argid]);
-		return -1;
-	}
-
-	max_time = (double) atoi(argv[argid + 1]);
-	if (max_time < 0) {
-		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", argv[argid + 1]);
-		return -1;
-	}
-
-	in_file = fopen(argv[argid + 2], "r");
-	if (in_file == NULL) {
-		fprintf(stderr, "Error:Unable to open %s file\n", argv[argid + 2]);
-		return -1;
-	}
-	/////////////////////////////////////////////////////////////////////////////////////
-
-
-#ifdef USE_TRACE_FILE
-	//get basename used for trace file output
-	get_basename(argv[argid + 2], &basename_trace[0]);
+#ifdef USE_THREAD
+	pthread_mutex_lock(&edf_mutex); 
+		edf_active_threads ++;
+	pthread_mutex_unlock(&edf_mutex); 
 #endif
 
+
+	strcpy(basename_trace, outfile);
 	
 	/// Create processor's list
 	for (i = 0; i < no_proc; i++) {
@@ -138,52 +149,29 @@ int start_edf_main(int argc, char *argv[], int argid)
 		p = add_processor_list(p, new_processor);
 	}
 
-	//* Read in data
-	n = 0;
-	current_time = 0.0;
-	event_id = 0;
-	while (1) {
-		if (fgets(line, sizeof(line), in_file) == NULL)
-			break;
 
 
-		//* read task set parameters from file
-		if (line[0] != '#') {
-			sscanf(line, "%f%f", &period, &wcet);
-			/* set task parameters for first activation */
-			new_task.id = ++n;
-			new_task.t = (double) period;
-			new_task.c = (double) wcet;
-			new_task.r = current_time;
-			new_task.d = new_task.r + new_task.t;
-			new_task.cet = 0.0;
-			new_task.e = -1;
-			new_task.p = set_task_edf_priority(&new_task);
-			new_task.state = TASK_READY;
-			new_task.res = NULL;
-			//add task to task list
-			t = add_task_list_p_sorted(t, new_task);
-			
-			task_in_event = pointer_to_task(t, new_task.id);
-			
-			//* add event (task release) to sched events list
-			new_event.id = event_id++;
-			new_event.t_event = (int) SCHEDE_RELEASE;
-			// event.time = task.f;            /* start execution at 0 + task phase */
-			new_event.time = current_time;
-			new_event.task = task_in_event;
-			new_event.p = task_in_event -> p;
-			new_event.processor = NULL;
-			event = add_sched_event_list_time_sorted(event, new_event);
+	no_task = 0;
+	task_to_execute = t;
+	while(task_to_execute)
+	{
+		task_in_event = pointer_to_task(t, task_to_execute->id);
+		
+		//* add event (task release) to sched events list
+		new_event.id = event_id++;
+		new_event.t_event = (int) SCHEDE_RELEASE;
+		new_event.time = task_to_execute->f;
+		new_event.task = task_in_event;
+		new_event.p = task_in_event -> p;
+		new_event.res_id = 0;
+		new_event.processor = NULL;
+		event_list = add_sched_event_list_time_sorted(event_list, new_event);
 
-			no_task++;
-		}
+		task_to_execute = task_to_execute->next;
+		no_task++;
 	}
 
-	if (!n) {
-		fprintf(stderr, "Error: empty file %s\n", argv[argid + 1]);
-		return -1;
-	}
+
 
 	//* Get System's Utilization
 	util = 0.0;
@@ -229,16 +217,16 @@ int start_edf_main(int argc, char *argv[], int argid)
 
 	///  Start scheduling task set on no_proc processors
 	 
-	if (event) {
-		task_in_event = event -> task;
-		current_time = event -> time;
+	if (event_list) {
+		task_in_event = event_list-> task;
+		current_time = event_list-> time;
 	}
 
-	while ((event) && (current_time <= max_time)) {
+	while ((event_list) && (current_time <= max_time)) {
 
 		//if(previous_time != current_time)
 		printf("\n================= Time %.2f ==============\n", current_time);
-		switch (event ->t_event) {
+		switch (event_list ->t_event) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //										TASK START/RESUME
@@ -275,9 +263,9 @@ int start_edf_main(int argc, char *argv[], int argid)
 				new_event.t_event = (int) SCHEDE_FINISH;
 				new_event.time = current_time + task_in_event -> c;
 				new_event.task = task_in_event;
-				new_event.p = event -> p;
+				new_event.p = event_list -> p;
 				new_event.processor = current_processor;
-				event = add_sched_event_list_time_sorted(event, new_event);
+				event_list = add_sched_event_list_time_sorted(event_list, new_event);
 
 				// getchar();
 				task_in_event -> e = current_time;
@@ -306,7 +294,7 @@ int start_edf_main(int argc, char *argv[], int argid)
 				current_processor = p;
 				task_in_processor = current_processor -> task;
 				while (current_processor) {
-					if ((current_processor->status == PROCESSOR_BUSY) && (event -> p < task_in_processor -> p)) {
+					if ((current_processor -> status == PROCESSOR_BUSY) && (event_list -> p < task_in_processor -> p)) {
 						if (!preemptable_task) {
 							preemptable_task = current_processor -> task;
 							preemptable_processor = current_processor;
@@ -341,8 +329,8 @@ int start_edf_main(int argc, char *argv[], int argid)
 					// Delete schedule FINISH event	/////////////////////////////////
 					new_event.task = task_in_processor;
 					new_event.t_event = SCHEDE_FINISH;
-					if (is_event_in_list(event, &new_event, &i)) {
-						event = del_sched_event_from_list(event, i);
+					if (is_event_in_list(event_list, &new_event, &i)) {
+						event_list = del_sched_event_from_list(event_list, i);
 					}
 
 #ifdef USE_TRACE_FILE
@@ -359,9 +347,9 @@ int start_edf_main(int argc, char *argv[], int argid)
 					new_event.t_event = (int) SCHEDE_FINISH;
 					new_event.time = current_time + task_in_event -> c;
 					new_event.task = task_in_event;
-					new_event.p = event -> p;
+					new_event.p = task_in_event -> p; //changed from event_list->p
 					new_event.processor = current_processor;
-					event = add_sched_event_list_time_sorted(event, new_event);
+					event_list = add_sched_event_list_time_sorted(event_list, new_event);
 					//printf("\nDefining new event FINISH task %d at time %.2f\n", task_in_event -> id, new_event.time);
 
 #ifdef USE_TRACE_FILE
@@ -388,7 +376,7 @@ int start_edf_main(int argc, char *argv[], int argid)
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		case SCHEDE_FINISH:
 
-			current_processor = event -> processor;
+			current_processor = event_list -> processor;
 
 			printf("Event: Finish task %d\n", task_in_event->id);
 			/* check if task finished by its deadline */
@@ -419,11 +407,11 @@ int start_edf_main(int argc, char *argv[], int argid)
 					//print_trace_list(current_processor->tracer);
 					sprintf(file_trace, "%s_p%d.ktr", &basename_trace[0], file_id);
 					create_trace_list(file_trace, current_processor->tracer, no_task, current_time, (char *) "EDF");
-					);
+					
 					current_processor = current_processor->next;
 
 				}
-				current_processor = event -> processor;
+				current_processor = event_list -> processor;
 
 #endif
 				////////////////////////////////////////////////////////
@@ -447,7 +435,7 @@ int start_edf_main(int argc, char *argv[], int argid)
 			new_event.task = task_in_event;
 			new_event.p = task_in_event -> p;
 			new_event.processor = NULL;
-			event = add_sched_event_list_time_sorted(event, new_event);
+			event_list = add_sched_event_list_time_sorted(event_list, new_event);
 
 #ifdef USE_TRACE_FILE
 			////////////////////////////// add end task on tracer
@@ -460,7 +448,7 @@ int start_edf_main(int argc, char *argv[], int argid)
 
 
 			//printf("check if there is a task in ready state elegible to execute at time %.2f\n", current_time);
-			task_to_execute = find_task_to_execute(t, event -> time);
+			task_to_execute = find_task_to_execute(t, event_list -> time);
 			if (task_to_execute) {
 
 				//print task to execute
@@ -472,8 +460,8 @@ int start_edf_main(int argc, char *argv[], int argid)
 					new_event.time = current_time;
 					new_event.task = task_to_execute;
 					new_event.t_event = SCHEDE_RELEASE;
-					if (is_event_in_list(event, &new_event, &i)) {
-						event = del_sched_event_from_list(event, i);
+					if (is_event_in_list(event_list, &new_event, &i)) {
+						event_list = del_sched_event_from_list(event_list, i);
 					}
 				}
 
@@ -483,12 +471,13 @@ int start_edf_main(int argc, char *argv[], int argid)
 				new_event.task = task_to_execute;
 				new_event.p = task_to_execute -> p;
 				new_event.processor = current_processor;
-				event = add_sched_event_list_time_sorted(event, new_event);
+				event_list = add_sched_event_list_time_sorted(event_list, new_event);
 
 				assign_task_to_processor(current_processor, task_to_execute, current_time);
+				printf("|_ Task %d is now executing on processor %d\n", task_to_execute->id, current_processor->id);
 				task_to_execute -> e = current_time;
 				task_to_execute -> state = (int) TASK_RUNNING;
-				printf("|_ Task %d is now executing on processor %d\n", task_to_execute->id, current_processor->id);
+				//printf("task %d assigned to processor %d\n", task_to_execute -> id, current_processor -> id);
 
 #ifdef USE_TRACE_FILE
 				/////////////////////////////////// add tracer deadline and execute
@@ -507,10 +496,10 @@ int start_edf_main(int argc, char *argv[], int argid)
 			}
 			break;
 		}
-		event = del_sched_event_head_list(event);
-		if (event) {
-			task_in_event = event -> task;
-			current_time = event -> time;
+		event_list = del_sched_event_head_list(event_list);
+		if (event_list) {
+			task_in_event = event_list -> task;
+			current_time = event_list -> time;
 		}
 	}
 
@@ -524,19 +513,197 @@ int start_edf_main(int argc, char *argv[], int argid)
 		printf("\nProcessor %d: U = %f", file_id, current_processor->u);
 		//print_trace_list((trace_event *)current_processor->tracer);
 		sprintf(file_trace, "%s_p%d.ktr", &basename_trace[0], file_id);
-		create_trace_list(file_trace, (trace_event *) current_processor->tracer, no_task, (int) max_time, (char *) "EDF");
+		create_trace_list(file_trace, (trace_event *) current_processor->tracer, no_task, (int) max_time, (char *) "RM");
 		current_processor = (processor_t *) current_processor->next;
 
 	}
 	////////////////////////////////////////////////////////
 #endif
 
+#ifdef USE_THREAD
+	pthread_mutex_lock(&edf_mutex); 
+		edf_active_threads--;
+	pthread_mutex_unlock(&edf_mutex); 
+#endif
 	//printf("Scheduling activities finished at current time = %.2f\n", current_time);
 	return(no_proc);
 }
 
-void print_edf_usage()
+
+int start_edf_main(int argc, char *argv[], int argid)
 {
-	fprintf(stderr, "\n EDF params:");
-	fprintf(stderr, "\n   processors time tasks.txt\n");
+#ifdef USE_THREAD
+	pthread_t thread_task;
+	edf_thread_args args;
+#endif
+	sched_event_t new_event;
+	task_set_t *t = NULL; /* Head of task set's list */
+	task_set_t *current_task = NULL; /* Head of task set's list */
+	task_set_t new_task; /* List pointers */
+	processor_t* list, *current_processor;
+
+
+	char line[255];
+	char basename_trace[255];
+	char partialname[255];
+
+	int res;
+	int n, i, mode;
+	int no_proc, no_task;
+	int event_id;
+	double max_time;
+	float period, wcet, phase;
+
+	FILE *in_file; /* Input file */
+
+	/////////////////////////////////////// checking params
+	if (argc != PARAM_COUNT) {
+		fprintf(stderr, "\n You must supply the number of processors, simulation time (0 = lcm) and a file name with the task set parameters (see README file for details)\n");
+		return -1;
+	}
+
+	mode = atoi(argv[argid+PARAM_MODE]);
+	if (mode < 0 || mode >= 2) {
+		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", argv[argid+PARAM_MODE]);
+		return -1;
+	}
+
+	no_proc = atoi(argv[argid+PARAM_NOPROC]);
+	if (no_proc <= 0) {
+		fprintf(stderr, "Error: invalid mode, use 0 for global or 1 for partial \n");
+		return -1;
+	}
+
+	max_time = (double) atoi(argv[argid + PARAM_MAXTIME]);
+	if (max_time < 0) {
+		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", argv[argid + PARAM_MAXTIME]);
+		return -1;
+	}
+
+	in_file = fopen(argv[argid + PARAM_FILE], "r");
+	if (in_file == NULL) {
+		fprintf(stderr, "Error:Unable to open %s file\n", argv[argid + PARAM_FILE]);
+		return -1;
+	}
+	/////////////////////////////////////////////////////////////////////////////////////
+
+
+#ifdef USE_TRACE_FILE
+	//get basename used for trace file output
+	get_basename(argv[argid + PARAM_FILE], &basename_trace[0]);
+#endif
+
+	no_task = 0;
+	
+	if(mode == 0)	//use global mode
+	{
+		//* Read in data
+		n = 0;
+		event_id = 0;
+		while (1) {
+			if (fgets(line, sizeof(line), in_file) == NULL)
+				break;
+
+
+			//* read task set parameters from file
+			if (line[0] != '#') {
+				sscanf(line, "%f%f%f", &period, &wcet, &phase);
+				//* set task parameters for first activation
+				new_task.id = ++n;
+				new_task.t = (double) period;
+				new_task.c = (double) wcet;
+				new_task.f = (double) phase;
+				new_task.r = 0.0;
+				new_task.res = NULL;
+				new_task.d = new_task.r + new_task.t;
+				new_task.cet = 0.0;
+				new_task.e = -1;
+				new_task.p = set_task_rm_priority(&new_task);
+				new_task.state = TASK_READY;
+				new_task.se = 0;
+
+				//add task to task list
+				t = add_task_list_p_sorted(t, new_task);
+				no_task++;
+			}
+		}
+
+		if (!n) {
+			fprintf(stderr, "Error: empty file %s\n", argv[argid + PARAM_FILE]);
+			return -1;
+		}
+
+
+		res = start_edf(mode,no_proc, max_time, t, basename_trace);
+
+	}else if(mode == 1)		//partial mode
+	{
+
+#ifdef USE_THREAD
+		pthread_mutex_init (&edf_mutex, NULL); 
+		edf_active_threads = 0;
+#endif
+		res = 0;
+		list = start_edf_nf(1, argv[argid + PARAM_FILE]);
+
+		current_processor = list;
+
+		while(current_processor)
+		{
+			n = 0;
+			t = NULL;
+			current_task = current_processor->task;
+			//* read task set parameters from file
+			while(current_task)
+			{
+				//* set task parameters for first activation
+				new_task.id = ++n;
+				new_task.t = (double) current_task->t;
+				new_task.c = (double) current_task->c;
+				new_task.f = (double) current_task->f;
+				new_task.r = 0.0;
+				new_task.res = NULL;
+				new_task.d = new_task.r + new_task.t;
+				new_task.cet = 0.0;
+				new_task.e = -1;
+				new_task.p = set_task_rm_priority(&new_task);
+				new_task.state = TASK_READY;
+				new_task.se = 0;
+
+	
+				//add task to task list
+				t = add_task_list_p_sorted(t, new_task);
+				current_task = current_task->next;
+			}
+
+			sprintf(&partialname, "%s_partial%d",basename_trace,current_processor->id);
+#ifdef USE_THREAD
+			args.mode	= mode;
+			args.no_proc	= 1;
+			args.max_time	= max_time;
+			args.task	= t;
+			args.outfile	= partialname;
+
+			res = pthread_create(&thread_task, NULL, thread_start_rm, &args);
+
+			if( res != 0)
+				printf("\n Error no se pudo crear el hilo");
+			else
+				printf("\nnew thread created...");
+#else
+			res += start_rm(mode, 1, max_time, t, partialname);
+#endif
+			current_processor = current_processor->next;
+		}
+	}
+#ifdef USE_THREAD
+	//wait for finish threads
+	while(edf_active_threads != 0);
+	{
+		printf("\nwaitting for threads ... %d", edf_active_threads);
+	}
+#endif
+
+	printf("\n");
+	return res;
 }
