@@ -13,7 +13,15 @@
 #include "trace_event.h"
 
 extern int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basename_trace);
-extern int start_rm_main(int argc, char *argv[], int argid);
+extern int start_rm_main(ALGORITHM_PARAMS parameters);
 extern void print_rm_usage();
+
+typedef enum
+{
+	RM_PARTIAL_NF_LL=0,
+	//RM_PARTIAL_FF,
+	RM_PARTIAL_COUNT,
+
+}EDF_PARTIAL_MODE;
 
 #endif

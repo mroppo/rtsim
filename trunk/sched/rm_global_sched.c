@@ -908,7 +908,7 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* outfil
 
 
 
-int start_rm_main(int argc, char *argv[], int argid)
+int start_rm_main(ALGORITHM_PARAMS parameters)
 {
 #ifdef USE_THREAD
 	pthread_t thread_task;
@@ -926,7 +926,8 @@ int start_rm_main(int argc, char *argv[], int argid)
 	char partialname[255];
 
 	int res;
-	int n, i, mode;
+	int n, i;
+	ALGORITHM_MODE mode;
 	int no_proc, no_task;
 	int event_id;
 	double max_time;
@@ -935,32 +936,33 @@ int start_rm_main(int argc, char *argv[], int argid)
 	FILE *in_file; /* Input file */
 
 	/////////////////////////////////////// checking params
-	if (argc != PARAM_COUNT) {
+	/*if (parameters.param_count != PARAM_COUNT) {
 		fprintf(stderr, "\n You must supply the number of processors, simulation time (0 = lcm) and a file name with the task set parameters (see README file for details)\n");
 		return -1;
-	}
+	}*/
 
-	mode = atoi(argv[argid+PARAM_MODE]);
-	if (mode < 0 || mode >= 2) {
-		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", argv[argid+PARAM_MODE]);
+	mode = parameters.mode;//atoi(argv[argid+PARAM_MODE]);
+	if (mode < 0 || mode >= MODE_COUNT) {
+		fprintf(stderr, "Error: invalid mode, use 0 for global or 1 for partial %d\n", mode);
 		return -1;
 	}
 
-	no_proc = atoi(argv[argid+PARAM_NOPROC]);
+	no_proc = parameters.processor;//atoi(argv[argid+PARAM_NOPROC]);
 	if (no_proc <= 0) {
-		fprintf(stderr, "Error: invalid mode, use 0 for global or 1 for partial \n");
+		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", no_proc);		
 		return -1;
 	}
 
-	max_time = (double) atoi(argv[argid + PARAM_MAXTIME]);
+	max_time = (double) parameters.time;//atoi(argv[argid + PARAM_MAXTIME]);
 	if (max_time < 0) {
-		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", argv[argid + PARAM_MAXTIME]);
+		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", max_time); //argv[argid + PARAM_MAXTIME]);
 		return -1;
 	}
 
-	in_file = fopen(argv[argid + PARAM_FILE], "r");
+	//in_file = fopen(argv[argid + PARAM_FILE], "r");
+	in_file = fopen(parameters.data, "r");
 	if (in_file == NULL) {
-		fprintf(stderr, "Error:Unable to open %s file\n", argv[argid + PARAM_FILE]);
+		fprintf(stderr, "Error:Unable to open %s file\n", parameters.data);//argv[argid + PARAM_FILE]);
 		return -1;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -968,12 +970,13 @@ int start_rm_main(int argc, char *argv[], int argid)
 
 #ifdef USE_TRACE_FILE
 	//get basename used for trace file output
-	get_basename(argv[argid + PARAM_FILE], &basename_trace[0]);
+	//get_basename(argv[argid + PARAM_FILE], &basename_trace[0]);
+	get_basename(parameters.data, &basename_trace[0]);
 #endif
 
 	no_task = 0;
 	
-	if(mode == 0)	//use global mode
+	if(mode == MODE_GLOBAL)	//use global mode
 	{
 		//* Read in data
 		n = 0;
@@ -1018,14 +1021,15 @@ int start_rm_main(int argc, char *argv[], int argid)
 		}
 
 		if (!n) {
-			fprintf(stderr, "Error: empty file %s\n", argv[argid + PARAM_FILE]);
+			//fprintf(stderr, "Error: empty file %s\n", argv[argid + PARAM_FILE]);
+			fprintf(stderr, "Error: empty file %s\n", parameters.data);
 			return -1;
 		}
 
 
 		res = start_rm(mode,no_proc, max_time, t, basename_trace);
 
-	}else if(mode == 1)		//partial mode
+	}else if(mode == MODE_PARTIAL)		//partial mode
 	{
 
 #ifdef USE_THREAD
@@ -1033,7 +1037,15 @@ int start_rm_main(int argc, char *argv[], int argid)
 		rm_active_threads = 0;
 #endif
 		res = 0;
-		list = start_rm_nf_ll(1, argv[argid + PARAM_FILE]);
+		list = NULL;
+		switch(parameters.partial_func)
+		{
+			case RM_PARTIAL_NF_LL:
+				//list = start_rm_nf_ll(1, argv[argid + PARAM_FILE]);
+				list = start_rm_nf_ll(1, parameters.data);
+			break;
+		}
+		
 
 		current_processor = list;
 
