@@ -22,6 +22,6 @@ typedef enum
 	//RM_PARTIAL_FF,
 	RM_PARTIAL_COUNT,
 
-}EDF_PARTIAL_MODE;
+}RM_PARTIAL_MODE;
 
 #endif
