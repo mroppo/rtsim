@@ -202,7 +202,7 @@ processor_t*  start_rm_nf_ll(int nproc, char *file )
       return p;
    }
 
-
+	return NULL;
 }
 
 processor_t*  start_rm_nf_ll_main(int argc, char *argv[] )

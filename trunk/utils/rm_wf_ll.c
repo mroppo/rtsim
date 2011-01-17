@@ -222,6 +222,8 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
       printf("%d", m);
       return p;
    }
+
+   return NULL;
 }
 
 processor_t*  start_rm_wf_ll_main(int argc, char *argv[] )

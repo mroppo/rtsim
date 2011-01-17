@@ -20,9 +20,9 @@ void printUsage(int method)
 	printf("\n   8: RM Partial FF LL");
 	printf("\n   9: RM Partial WF LL");
 
-	printf("\n   4: EDF With Deadlines");
-	printf("\n   5: RM With Deadlines");
-	printf("\n   6: FIFO");
+	printf("\n   10: EDF With Deadlines");
+	printf("\n   11: RM With Deadlines");
+	printf("\n   12: FIFO");
 	/*printf("\n mode:");
 	printf("\n   0: Global");
 	printf("\n   1: Partial");*/
@@ -105,6 +105,24 @@ int main(int argc, char *argv[])
 				parameters.mode			= MODE_PARTIAL;
 				parameters.partial_func = RM_PARTIAL_WF_LL;
 			break;
+
+
+//////////// others
+			case MENU_EDF_DEADLINES:
+				parameters.algorithm	= EDF_DEADLINES;
+				parameters.mode			= 0;
+				parameters.partial_func = 0;
+			break;
+			case MENU_RM_DEADLINES:
+				parameters.algorithm	= RM_DEADLINES;
+				parameters.mode			= 0;
+				parameters.partial_func = 0;
+			break;
+			case MENU_FIFO:
+				parameters.algorithm	= FIFO;
+				parameters.mode			= 0;
+				parameters.partial_func = 0;
+			break;
 		}
 		
 		parameters.processor	= atoi(argv[argidx++]);
@@ -123,16 +141,14 @@ int main(int argc, char *argv[])
 				break;
 
 
-
-
 			case EDF_DEADLINES:
-				res = start_edf_deadline_main(argc - 2, argv, argidx);
+				res = start_edf_deadline_main(parameters);
 				break;
 			case RM_DEADLINES:
-				res = start_rm_deadline_main(argc - 2, argv, argidx);
+				res = start_rm_deadline_main(parameters);
 				break;
 			case FIFO:
-				res = start_fifo_main(argc - 2, argv, argidx);
+				res = start_fifo_main(parameters);
 				break;
 		}
 	}

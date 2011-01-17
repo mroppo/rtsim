@@ -209,6 +209,8 @@ double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
       printf("%d", m);
 		return p;
    }
+
+   return NULL;
 }
 processor_t* start_edf_wf_main(int argc, char *argv[])
 {

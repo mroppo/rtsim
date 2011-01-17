@@ -11,7 +11,7 @@
 #include "sched_event.h"
 #include "trace_event.h"
 
-extern int start_rm_deadline_main(int argc, char *argv[],int argid);
+extern int start_rm_deadline_main(ALGORITHM_PARAMS parameters);
 extern void print_rm_deadline_usage();
 
 #endif

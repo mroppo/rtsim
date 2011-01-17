@@ -202,6 +202,8 @@ processor_t* start_edf_ff(int nproc, char *file)
       printf("%d", m);
 		return p;
    }
+
+   return NULL;
 }
 processor_t* start_edf_ff_main(int argc, char *argv[])
 {

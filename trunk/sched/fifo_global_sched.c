@@ -60,7 +60,7 @@
 
 
 
-int start_fifo_main(int argc, char *argv[], int argid)
+int start_fifo_main(ALGORITHM_PARAMS parameters)
 {
 
 	task_set_t *t = NULL; /* Head of task set's list */
@@ -98,27 +98,27 @@ int start_fifo_main(int argc, char *argv[], int argid)
 	///////////////////////////////
 #endif
 
-	/////////////////////////////////////// checking params
-	if (argc != 3) {
-		fprintf(stderr, "You must supply the number of processors, simulation time (0 = lcm) and a file name with the task set parameters (see README file for details)\n");
-		return -1;
-	}
+	///////////////////////////////////////// checking params
+	//if (argc != 3) {
+	//	fprintf(stderr, "You must supply the number of processors, simulation time (0 = lcm) and a file name with the task set parameters (see README file for details)\n");
+	//	return -1;
+	//}
 
-	no_proc = atoi(argv[argid]);
+	no_proc = parameters.processor;//atoi(argv[argid]);
 	if (no_proc <= 0) {
-		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", argv[argid]);
+		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", no_proc);
 		return -1;
 	}
 
-	max_time = (double) atoi(argv[argid + 1]);
+	max_time = (double) parameters.time;//atoi(argv[argid + 1]);
 	if (max_time < 0) {
-		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", argv[argid + 1]);
+		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", max_time);
 		return -1;
 	}
 
-	in_file = fopen(argv[argid + 2], "r");
+	in_file = fopen(parameters.data, "r");
 	if (in_file == NULL) {
-		fprintf(stderr, "Error:Unable to open %s file\n", argv[argid + 2]);
+		fprintf(stderr, "Error:Unable to open %s file\n", parameters.data);
 		return -1;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ int start_fifo_main(int argc, char *argv[], int argid)
 
 #ifdef USE_TRACE_FILE
 	//get basename used for trace file output
-	get_basename(argv[argid + 2], &basename_trace[0]);
+	get_basename(parameters.data, &basename_trace[0]);
 #endif
 
 	
@@ -182,7 +182,7 @@ int start_fifo_main(int argc, char *argv[], int argid)
 	}
 
 	if (!n) {
-		fprintf(stderr, "Error: empty file %s\n", argv[argid + 2]);
+		fprintf(stderr, "Error: empty file %s\n", parameters.data);
 		return -1;
 	}
 

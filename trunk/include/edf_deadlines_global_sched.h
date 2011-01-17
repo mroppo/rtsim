@@ -9,5 +9,5 @@
 #include "sched_event.h"
 #include "trace_event.h"
 
-extern int start_edf_deadline_main(int argc, char *argv[],int argid);
+extern int start_edf_deadline_main(ALGORITHM_PARAMS parameters);
 extern void print_edf_deadline_usage();

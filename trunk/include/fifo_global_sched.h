@@ -11,5 +11,5 @@
 #include "trace_event.h"
 
 
-extern int start_fifo_main(int argc, char *argv[], int argid);
+extern int start_fifo_main(ALGORITHM_PARAMS parameters);
 extern void print_fifo_usage();
