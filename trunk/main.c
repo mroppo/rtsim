@@ -9,6 +9,10 @@ void printUsage(int method)
 	printf("\n   0: EDF GLOBAL");
 	printf("\n   1: EDF PARTIAL NF");
 	printf("\n   2: EDF PARTIAL FF");
+	printf("\n   3: EDF PARTIAL BF");
+	printf("\n   3: EDF PARTIAL WF");
+
+
 
 	printf("\n   3: RM Global");
 	printf("\n   4: RM Partial NF LL");
@@ -44,6 +48,7 @@ int main(int argc, char *argv[])
 		method = atoi(argv[1]);
 
 		switch (method) {
+//////////// EDF
 			case MENU_EDF_GLOBAL:
 				parameters.algorithm	= EDF;
 				parameters.mode			= MODE_GLOBAL;
@@ -59,8 +64,19 @@ int main(int argc, char *argv[])
 				parameters.mode			= MODE_PARTIAL;
 				parameters.partial_func = EDF_PARTIAL_FF;
 			break;
+			case MENU_EDF_PARTIAL_BF:
+				parameters.algorithm	= EDF;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = EDF_PARTIAL_BF;
+			break;
+			case MENU_EDF_PARTIAL_WF:
+				parameters.algorithm	= EDF;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = EDF_PARTIAL_WF;
+			break;
 
 
+//////////// RM
 			case MENU_RM_GLOBAL:
 				parameters.algorithm	= RM;
 				parameters.mode			= MODE_GLOBAL;
@@ -78,13 +94,8 @@ int main(int argc, char *argv[])
 		strcpy(parameters.data, argv[argidx++]);
 
 		parameters.param_count = argc - 2;
-		//strcpy(params[param_idx++], argv[argidx++]);	//processor count
-		//strcpy(params[param_idx++], argv[argidx++]);	//time
-		//strcpy(params[param_idx++], argv[argidx++]);	//data file
+		
 
-		//argc = 3;
-		//method = 1;
-		//method = atoi(params[0]);
 		switch ((int)parameters.algorithm) {
 			case EDF:
 				res = start_edf_main(parameters);

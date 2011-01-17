@@ -9,6 +9,8 @@
 #include "trace_event.h"
 #include "edf_nf.h"
 #include "edf_ff.h"
+#include "edf_bf.h"
+#include "edf_wf.h"
 
 extern int start_edf_main(ALGORITHM_PARAMS parameters);
 extern void print_edf_usage();
@@ -17,6 +19,8 @@ typedef enum
 {
 	EDF_PARTIAL_NF=0,
 	EDF_PARTIAL_FF,
+	EDF_PARTIAL_BF,
+	EDF_PARTIAL_WF,
 	EDF_PARTIAL_COUNT,
 
 }EDF_PARTIAL_MODE;

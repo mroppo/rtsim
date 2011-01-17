@@ -659,8 +659,24 @@ int start_edf_main(ALGORITHM_PARAMS parameters)
 			case EDF_PARTIAL_FF:
 				list = start_edf_ff(1, parameters.data);
 				break;
+			case EDF_PARTIAL_BF:
+				list = start_edf_bf(1, parameters.data);
+				break;
+
+			case EDF_PARTIAL_WF:
+				list = start_edf_wf(1, parameters.data);
+				break;
+			default:
+				fprintf(stderr, "Error: unknow partial function %d\n", parameters.partial_func);
+				return -1;
+
 		}
 		
+		if(list == NULL)
+		{
+			fprintf(stderr, "Error: unknow list for function %d\n", parameters.partial_func);
+			return -1;
+		}
 
 		current_processor = list;
 

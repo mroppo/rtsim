@@ -1,8 +1,8 @@
 #ifndef __SIMULATOR_H__
 #define __SIMULATOR_H__
 
-	//#define OS_WINDOWS
-	#define OS_LINUX
+	#define OS_WINDOWS
+	//#define OS_LINUX
 
 
 	#ifdef OS_LINUX
@@ -45,6 +45,9 @@
 		MENU_EDF_GLOBAL = 0,
 		MENU_EDF_PARTIAL_NF,
 		MENU_EDF_PARTIAL_FF,
+		MENU_EDF_PARTIAL_BF,
+		MENU_EDF_PARTIAL_WF,
+
 		MENU_RM_GLOBAL,
 		MENU_RM_PARTIAL_NF_LL,
 
