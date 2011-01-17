@@ -6,16 +6,19 @@ void printUsage(int method)
 {
 	printf("Simulator Usage: \n ./simulator.run method processors time taskfile");
 	printf("\n methods:");
-	printf("\n   0: EDF GLOBAL");
-	printf("\n   1: EDF PARTIAL NF");
-	printf("\n   2: EDF PARTIAL FF");
-	printf("\n   3: EDF PARTIAL BF");
-	printf("\n   3: EDF PARTIAL WF");
+	printf("\n   0: EDF Global");
+	printf("\n   1: EDF Partial NF");
+	printf("\n   2: EDF Partial FF");
+	printf("\n   3: EDF Partial BF");
+	printf("\n   4: EDF Partial WF");
 
 
 
-	printf("\n   3: RM Global");
-	printf("\n   4: RM Partial NF LL");
+	printf("\n   5: RM Global");
+	printf("\n   6: RM Partial NF LL");
+	printf("\n   7: RM Partial BF LL");
+	printf("\n   8: RM Partial FF LL");
+	printf("\n   9: RM Partial WF LL");
 
 	printf("\n   4: EDF With Deadlines");
 	printf("\n   5: RM With Deadlines");
@@ -34,7 +37,7 @@ void printUsage(int method)
 
 int main(int argc, char *argv[])
 {
-	int method = -1;
+	MENU_ITEM method = -1;
 	int res = -1;
 	int argidx = 2; //first arg is app file, second is method used
 	//int param_idx = 0;
@@ -86,6 +89,21 @@ int main(int argc, char *argv[])
 				parameters.algorithm	= RM;
 				parameters.mode			= MODE_PARTIAL;
 				parameters.partial_func = RM_PARTIAL_NF_LL;
+			break;
+			case MENU_RM_PARTIAL_BF_LL:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_BF_LL;
+			break;
+			case MENU_RM_PARTIAL_FF_LL:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_FF_LL;
+			break;
+			case MENU_RM_PARTIAL_WF_LL:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_WF_LL;
 			break;
 		}
 		

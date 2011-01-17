@@ -1044,9 +1044,27 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 				//list = start_rm_nf_ll(1, argv[argid + PARAM_FILE]);
 				list = start_rm_nf_ll(1, parameters.data);
 			break;
+			case RM_PARTIAL_BF_LL:
+				list = start_rm_bf_ll(1, parameters.data);
+			break;
+			case RM_PARTIAL_FF_LL:
+				list = start_rm_ff_ll(1, parameters.data);
+			break;
+			case RM_PARTIAL_WF_LL:
+				list = start_rm_wf_ll(1, parameters.data);
+			break;
+
+
+			default:
+				fprintf(stderr, "Error: unknow partial function %d\n", parameters.partial_func);
+				return -1;
 		}
 		
-
+		if(list == NULL)
+		{
+			fprintf(stderr, "Error: unknow list for function %d\n", parameters.partial_func);
+			return -1;
+		}
 		current_processor = list;
 
 		while(current_processor)

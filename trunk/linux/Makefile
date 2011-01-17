@@ -19,6 +19,9 @@ objects = $(UTILS_DIR)/task_lists.o\
 	$(UTILS_DIR)/processor_lists.o\
 	$(UTILS_DIR)/trace_event.o\
 	$(UTILS_DIR)/rm_nf_ll.o\
+	$(UTILS_DIR)/rm_bf_ll.o\
+	$(UTILS_DIR)/rm_ff_ll.o\
+	$(UTILS_DIR)/rm_wf_ll.o\
 	$(UTILS_DIR)/edf_nf.o\
 	$(UTILS_DIR)/edf_ff.o\
 	$(UTILS_DIR)/edf_bf.o\
@@ -61,11 +64,12 @@ $(UTILS_DIR)/sched_events.o : $(UTILS_DIR)/sched_events.c $(includes)
 $(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
 	@cd $(UTILS_DIR) ; cc -c trace_event.c $(CC_OPT)
 
-$(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c rm_nf_ll.c $(CC_OPT)
+# $(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
+	# @cd $(UTILS_DIR) ; cc -c rm_nf_ll.c $(CC_OPT)
 
-$(UTILS_DIR)/edf_nf.o : $(UTILS_DIR)/edf_nf.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c edf_nf.c $(CC_OPT)
+# $(UTILS_DIR)/edf_nf.o : $(UTILS_DIR)/edf_nf.c $(includes)
+	# @cd $(UTILS_DIR) ; cc -c edf_nf.c $(CC_OPT)
+	
 clean :
 	-rm $(objects) $(schedulers)
 
