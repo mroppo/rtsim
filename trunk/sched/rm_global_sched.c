@@ -93,7 +93,7 @@ void* thread_start_rm(void* params)
 	double max_time = rm_params->max_time;
 	task_set_t *t	= rm_params->task;
 	char* outfile	= rm_params->outfile;
-	
+
 	start_rm(mode, no_proc, max_time, t, outfile);
 }
 #endif
@@ -141,11 +141,6 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* outfil
 	///////////////////////////////
 #endif
 
-#ifdef USE_THREAD
-	pthread_mutex_lock(&rm_mutex); 
-		rm_active_threads ++;
-	pthread_mutex_unlock(&rm_mutex); 
-#endif
 
 
 	strcpy(basename_trace, outfile);
@@ -1131,10 +1126,17 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 
 			res = pthread_create(&thread_task, NULL, thread_start_rm, &args);
 
+
 			if( res != 0)
 				printf("\n Error no se pudo crear el hilo");
 			else
+			{
 				printf("\nnew thread created...");
+				pthread_mutex_lock(&rm_mutex); 
+					rm_active_threads ++;
+				pthread_mutex_unlock(&rm_mutex); 
+
+			}
 #else
 			res += start_rm(mode, 1, max_time, t, partialname);
 #endif
