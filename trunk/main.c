@@ -20,6 +20,13 @@ void printUsage(int method)
 	printf("\n   8: RM Partial FF LL");
 	printf("\n   9: RM Partial WF LL");
 
+	printf("\n   10: RM Partial FF DU UO");
+	printf("\n   11: RM Partial FF IP");
+	printf("\n   12: RM Partial GT");
+	printf("\n   13: RM Partial NF IP");
+	printf("\n   14: RM Partial ST");
+	
+
 	printf("\n   10: EDF With Deadlines");
 	printf("\n   11: RM With Deadlines");
 	printf("\n   12: FIFO");
@@ -104,6 +111,32 @@ int main(int argc, char *argv[])
 				parameters.algorithm	= RM;
 				parameters.mode			= MODE_PARTIAL;
 				parameters.partial_func = RM_PARTIAL_WF_LL;
+			break;
+
+			case MENU_RM_PARTIAL_FF_DU_UO:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_FF_DU_UO;
+			break;
+			case MENU_RM_PARTIAL_FF_IP:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_FF_IP;
+			break;
+			case MENU_RM_PARTIAL_GT:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_GT;
+			break;
+			case MENU_RM_PARTIAL_NF_IP:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_NF_IP;
+			break;
+			case MENU_RM_PARTIAL_ST:
+				parameters.algorithm	= RM;
+				parameters.mode			= MODE_PARTIAL;
+				parameters.partial_func = RM_PARTIAL_ST;
 			break;
 
 

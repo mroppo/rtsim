@@ -1,19 +1,20 @@
 /*   FILE:
 
-         edf-bf-ll.c
+         rm-st.c
 
     DESCRIPTION:
 
-         Implements Best-Fit-Rate-Monotonic partitioned multiprocessor real-time
-         scheduling algorithm, using the LL condition instead of IP condition*
 
-         *Oh, Y. and Son, S.H. Tight performance bounds of heuristics for a real-time
-         scheduling problem. Technical Report CS-93-24, Univ. of Virginia. Dept. of
-         Computer Science, May 1993
+         Implements Rate-Monotonic Small-Tasks partitioned multiprocessor real-time
+         scheduling algorithm*
 
-         To execute the program, use:
+         *Burchard, A., Liebeherr, J., Oh, Y., and Son, S.H. New Strategies for Assigning
+          Real-Time Tasks to Multiprocessor Systems. IEEE Transactions on Computers,
+          44(12):1429-1442, Dec 1995
 
-            $ ./edf-bf-ll m file
+         To execute the program:
+
+            $ ./rm-st m file
 
             where
 
@@ -31,12 +32,11 @@
 
              n  indicates the number of processor on which the task set can be feasible scheduled
 
-
             See README file for details.
 
         To compile the program:
 
-            $ gcc -o edf-bf-ll edf-bf-ll.c -lm
+            $ gcc -o rm-st rm-st.c -lm
 
     Copyright (C) 2009
 
@@ -54,11 +54,12 @@
 
    LAST REVISION:    June 2009                                                         */
 
-#include "../include/rm_bf_ll.h"
+#include "../include/rm_st.h"
 
 
-processor_t*  start_rm_bf_ll(int nproc, char *file )
+processor_t*  start_rm_st(int nproc, char *file )
 {
+
 task_set_t *t=NULL;                 /* Head of task set's list */
 processor_t *p=NULL;                /* Head of processor's list */
 
@@ -71,14 +72,18 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
    FILE *in_file;  /* Input file */
 
    int no_proc, i, task_not_assigned;
-   char line[80];                 /* Input line */
+   char line[80];  /* Input line */
    float period, wcet,phase;
-   task_set_t new_task;
+   task_set_t new_task;            /* List pointers */
    task_set_t *task;
    processor_t new_processor;
    processor_t *current_processor;
+   float s, beta;
 
-
+   /*if (argc != 3) {
+     fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+     return;
+   }*/
 
    no_proc = nproc;
    if (no_proc < 0) {
@@ -104,12 +109,13 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
       /* convert number */
       if (line[0] != '#') {
          sscanf(line, "%f%f%f", &period, &wcet,&phase);
-         new_task.id = ++n;
-	 new_task.t = (double) period;
-         new_task.c = (double) wcet;
-		 new_task.f = (double) phase;
-         t = add_task_list_t_sorted(t, new_task);
-         // printf("added task %d =\t%.2f\t%.2f\n", new_task.id, new_task.t, new_task.c);
+	 new_task.id = ++n;
+	 new_task.t= (double) period;
+	 new_task.c= (double) wcet;
+	 new_task.f = (double) phase;
+         new_task.s = log10(new_task.t)/log10(2)  - floor( log10(new_task.t)/log10(2) );  /* get Si */
+         t = add_task_list_s_sorted(t, new_task);                                      /* sort tasks by Si  */
+         //printf("added task %d =\t%.2f\t%.2f\t%.4f\n", new_task.id, new_task.t, new_task.c, new_task.s);
      }
    }
 
@@ -117,14 +123,12 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
       fprintf(stderr,"Error: empty file %s\n", file);
       return;
    }
-
-   // printf("No of tasks = %d\n", n);
-   // print_task_list(t);
+//    printf("No of tasks = %d\n", n);
+//    print_task_list(t);
 
     /*
      * Get System's Utilization
      */
-
    // printf("\nTask's utilization:\n");
    util = 0.0;
 
@@ -134,7 +138,6 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
       // printf("u(%d) = %f\n", task -> id, task -> c/task -> t);
       task = (task_set_t *) task -> next;
    }
-
 //    printf("\nTotal utilization of task set = %f\n", util);
 //    if (no_proc)
 //       printf("\nTotal utilization of multiprocessor system = %f\n\n", util/no_proc);
@@ -142,7 +145,7 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
 //       printf("\n");
 
    /*
-    * Apply RM-BF algorithm
+    * Apply RM-ST algorithm
     */
 
    m=1;                                               /* current processor */
@@ -152,69 +155,50 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
    new_processor.status = PROCESSOR_BUSY;
    new_processor.task = NULL;
    p = add_processor_list(p, new_processor);
-//    printf("first processor created\n");
-//    print_processor_list(p);
-//    getchar();
+   current_processor = p;
 
+   s = 0.0;
    task = t;                          /* assign tasks to processors */
    while (task) {
-      util =  task -> c / task -> t;
-      current_processor = p;
-      task_not_assigned = 1;
-//       printf("\ntrying to assign task %d with utilization %.4f\n", task -> id, util);
-//       printf("available processors:\n");
-//       print_processor_list(p);
-//       getchar();
-      while ( task_not_assigned ) {
-         // printf("\nchecking processor %d, with u= %.4f\n", current_processor -> id, current_processor -> u);
-         if (current_processor -> n)
-           bound = (current_processor -> n + 1) * (pow(2, (double) 1/(current_processor -> n + 1)) - 1);
-         else
-            bound = 1;                        /* it is an empty processor */
-         // printf("bound = %.4f\n", bound);
-         if ( (current_processor -> u + util) <= bound) {
-            current_processor -> u += util;
-            current_processor -> n++;
-            // printf("current processor -> %d\n", current_processor -> id);
-            new_task.id = task -> id;
-            new_task.c = task -> c;
-            new_task.t = task -> t;
-            current_processor -> task = add_task_list(current_processor -> task, new_task);
-            new_processor.id = current_processor -> id;
-            new_processor.u = current_processor -> u;
-            new_processor.n = current_processor -> n;
-            new_processor.task = current_processor -> task;
-	    new_processor.status = PROCESSOR_BUSY;
-//             printf("task %d added to processor %d\n", task -> id, current_processor -> id);
-            p = del_processor_list(p, current_processor -> id);
-            p = add_processor_list_u_sorted_desc(p, new_processor);
-            task = (task_set_t *) task -> next;
-            current_processor = p;
-            task_not_assigned = 0;
-//             printf("processors list after assignment\n");
-//             print_processor_list(p);
-//             getchar();
-         } else {                          /* otherwise, use an empty (new) processor */
-            current_processor = (processor_t *) current_processor -> next;
+      util = current_processor -> u  + task -> c / task -> t;         /* check if task can be assigned to current processor */
+      // printf("\nUtil current processor %d = %.4f\n", current_processor -> id, util);
+
+      if (current_processor -> n) {
+         beta = task -> s - s;
+         bound = 1 - (beta * log(2));
+         if ( log(2) > bound ) {
+            bound =   log(2);
          }
-         if ( (!current_processor) ) {
-            // printf("\nUsing new processor\n");
-            m++;                                               /* current processor */
-            new_processor.id = m;                              /* create an empty processor */
-            new_processor.u = 0.0;
-            new_processor.n = 0;
-	    new_processor.status = PROCESSOR_BUSY;
-	    new_processor.task = NULL;
-            p = add_processor_list_u_sorted_desc(p, new_processor);
-            // printf("New process or added to list\n");
-            current_processor = get_processor_pointer(p, m);
-         }
+      } else {
+         bound = 1;              /* it is an empty processor */
+      }
+
+      // printf("bound = %.4f\n", bound);
+      if (util <= bound) {
+         current_processor -> u = util;
+         current_processor -> n++;
+         // printf("current processor -> %d\n", current_processor -> id);
+         new_task.id = task -> id;
+         new_task.c = task -> c;
+         new_task.t = task -> t;
+         current_processor -> task = add_task_list(current_processor -> task, new_task);
+         // printf("task %d assigned to processor %d\n", task -> id, current_processor -> id);
+         s = task -> s;
+         task = (task_set_t *) task -> next;
+      } else {                          /* otherwise, use an empty (new) processor */
+         // printf("\nUsing new processor\n");
+         m++;                                               /* current processor */
+         new_processor.id = m;                              /* create first processor */
+         new_processor.u = 0.0;
+         new_processor.n = 0;
+         new_processor.status = PROCESSOR_BUSY;
+         new_processor.task = NULL;
+         p = add_processor_list(p, new_processor);
+         current_processor = get_processor_pointer(p, m);
       }
    }
-
 //    printf("Task assigned to %d processors:\n", m);
 //    print_processor_list(p);
-
    if (no_proc) {
       if (m <= no_proc) {
 	 printf("%d", m);
@@ -227,17 +211,16 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
       printf("%d", m);
       return p;
    }
-
    return NULL;
 }
 
-processor_t*  start_rm_bf_ll_main(int argc, char *argv[] )
+processor_t*  start_rm_st_main(int argc, char *argv[] )
 {
    if (argc != 3) {
      fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return NULL;
    }
 
-	return start_rm_nf_ll(atoi(argv[1]), argv[2]);
+	return start_rm_st(atoi(argv[1]), argv[2]);
    
 }

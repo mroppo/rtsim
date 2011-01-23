@@ -1054,6 +1054,22 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 				list = start_rm_wf_ll(1, parameters.data);
 			break;
 
+			case RM_PARTIAL_FF_DU_UO:
+				list = start_rm_ff_du_uo(1, parameters.data);
+			break;
+			case RM_PARTIAL_FF_IP:
+				list = start_rm_ff_ip(1, parameters.data);
+			break;
+			case RM_PARTIAL_GT:
+				list = start_rm_gt(1, parameters.data);
+			break;
+			case RM_PARTIAL_NF_IP:
+				list = start_rm_nf_ip(1, parameters.data);
+			break;
+			case RM_PARTIAL_ST:
+				list = start_rm_st(1, parameters.data);
+			break;
+
 
 			default:
 				fprintf(stderr, "Error: unknow partial function %d\n", parameters.partial_func);

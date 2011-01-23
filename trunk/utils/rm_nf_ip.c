@@ -1,15 +1,19 @@
 /*   FILE:
 
-         rm-wf-ll.c
+         rm-nf-ip.c
 
     DESCRIPTION:
 
-         Implements Worst-Fit-Rate-Monotonic partitioned multiprocessor real-time
-         scheduling algorithm, using the LL condition
+         Implements Next-Fit-Rate-Monotonic partitioned multiprocessor real-time
+         scheduling algorithm, using the IP condition*
 
-         To execute the program, use
+         * Dhall, S.K. and Liu, C.L., On a Real-Time Scheduling Problem,
+           Operations Research, 26(1):127-140, January 1978.
 
-            $ ./bf-rm-ll m file
+
+         To execute the program:
+
+            $ ./rm-nf-ip m file
 
             where
 
@@ -32,7 +36,7 @@
 
         To compile the program:
 
-            $ gcc -o rm-wf-ll rm-wf-ll.c -lm
+            $ gcc -o rm-nf-ip rm-nf-ip.c -lm
 
     Copyright (C) 2009
 
@@ -50,19 +54,18 @@
 
    LAST REVISION:    June 2009                                                         */
 
-#include "../include/rm_wf_ll.h"
+#include "../include/rm_nf_ip.h"
 
 
-processor_t*  start_rm_wf_ll(int nproc, char *file )
+processor_t*  start_rm_nf_ip(int nproc, char *file )
 {
+task_set_t *t=NULL;                 /* Head of task set's list */
+processor_t *p=NULL;                /* Head of processor's list */
 
-	task_set_t *t=NULL;                 /* Head of task set's list */
-	processor_t *p=NULL;                /* Head of processor's list */
-
-	int n;                             /* Number of tasks */
-	int m;                             /* Number of processors */
-	float util;                        /* system's total utilization  */
-	double bound;                      /* schedulability bound (Liu and Layland)  */
+int n;                             /* Number of tasks */
+int m;                             /* Number of processors */
+float util;                        /* system's total utilization  */
+double bound;                      /* schedulability bound  */
 
 
    FILE *in_file;  /* Input file */
@@ -74,6 +77,7 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
    task_set_t *task;
    processor_t new_processor;
    processor_t *current_processor;
+   float power;
 
 
 
@@ -102,20 +106,23 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
       if (line[0] != '#') {
          sscanf(line, "%f%f%f", &period, &wcet,&phase);
          new_task.id = ++n;
-		new_task.t = (double) period;
-         new_task.c = (double) wcet;
+	 new_task.t  = (double) period;
+	 new_task.c  = (double) wcet;
 		 new_task.f = (double) phase;
          t = add_task_list_t_sorted(t, new_task);
          // printf("added task %d =\t%.2f\t%.2f\n", new_task.id, new_task.t, new_task.c);
      }
    }
 
+
    if (!n) {
       fprintf(stderr,"Error: empty file %s\n", file);
       return;
    }
+
 //    printf("No of tasks = %d\n", n);
 //    print_task_list(t);
+//    getchar();
 
     /*
      * Get System's Utilization
@@ -138,7 +145,7 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
 //       printf("\n");
 
    /*
-    * Apply RM-WF algorithm
+    * Apply RM-NF algorithm
     */
 
    m=1;                                               /* current processor */
@@ -148,67 +155,43 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
    new_processor.status = PROCESSOR_BUSY;
    new_processor.task = NULL;
    p = add_processor_list(p, new_processor);
-//    print_processor_list(p);
-//    getchar();
+   current_processor = p;
 
-   task = t;                          /* assign tasks to processors */
+   task = t;
    while (task) {
-      util =  task -> c / task -> t;
-      current_processor = p;
-      task_not_assigned = 1;
-//       printf("\ntrying to assign task %d with utilization %.4f\n", task -> id, util);
-//       printf("available processors:\n");
-//       print_processor_list(p);
-//       getchar();
-      while ( task_not_assigned ) {
-         // printf("\nchecking processor %d, with u= %.4f\n", current_processor -> id, current_processor -> u);
-         if (current_processor -> n)
-           bound = (current_processor -> n + 1) * (pow(2, (double) 1/(current_processor -> n + 1)) - 1);
-         else
-            bound = 1;                        /* it is an empty processor */
-         // printf("bound = %.4f\n", bound);
-         if ( (current_processor -> u + util) <= bound) {
-            current_processor -> u += util;
-            current_processor -> n++;
-            // printf("current processor -> %d\n", current_processor -> id);
-            new_task.id = task -> id;
-            new_task.c = task -> c;
-            new_task.t = task -> t;
-            current_processor -> task = add_task_list(current_processor -> task, new_task);
-            new_processor.id = current_processor -> id;
-            new_processor.u = current_processor -> u;
-            new_processor.n = current_processor -> n;
-            new_processor.task = current_processor -> task;
-	    new_processor.status = PROCESSOR_BUSY;
-//             printf("task %d added to processor %d\n", task -> id, current_processor -> id);
-            p = del_processor_list(p, current_processor -> id);
-            p = add_processor_list_u_sorted(p, new_processor);
-            task = (task_set_t *) task -> next;
-            current_processor = p;
-            task_not_assigned = 0;
-//             printf("processors list after assignment\n");
-//             print_processor_list(p);
-//             getchar();
-	 } else {                          /* otherwise, use an empty (new) processor */
-            current_processor = (processor_t *) current_processor -> next;
-         }
-         if ( (!current_processor) ) {
-            // printf("\nUsing new processor\n");
-            m++;                                               /* current processor */
-            new_processor.id = m;                              /* create an empty processor */
-            new_processor.u = 0.0;
-            new_processor.n = 0;
-	    new_processor.status = PROCESSOR_BUSY;
-	    new_processor.task = NULL;
-            p = add_processor_list_u_sorted(p, new_processor);
-            // printf("New process or added to list\n");
-            current_processor = get_processor_pointer(p, m);
-         }
+      util = task -> c / task -> t;         /* check if task can be assigned to current processor */
+      // printf("\nUtil current processor %d = %.4f\n", current_processor -> id, util);
+      if (current_processor -> n)
+         bound = 2 * pow( (1 + ( current_processor -> u / (current_processor -> n)) ), -1 * (current_processor -> n)) - 1;
+      else
+         bound = 1;                        /* it is an empty processor */
+      // printf("bound = %.4f\n", bound);
+      if (util <= bound) {
+         current_processor -> u += util;
+         current_processor -> n++;
+         // printf("current processor -> %d\n", current_processor -> id);
+         new_task.id = task -> id;
+         new_task.c = task -> c;
+         new_task.t = task -> t;
+         current_processor -> task = add_task_list(current_processor -> task, new_task);
+         // printf("task %d added to processor %d\n", task -> id, current_processor -> id);
+         task = (task_set_t *) task -> next;
+      } else {                          /* otherwise, use an empty (new) processor */
+         // printf("\nUsing new processor\n");
+         m++;                                               /* current processor */
+         new_processor.id = m;                              /* create first processor */
+         new_processor.u = 0.0;
+         new_processor.n = 0;
+	 new_processor.status = PROCESSOR_BUSY;
+	 new_processor.task = NULL;
+         p = add_processor_list(p, new_processor);
+         // printf("New processor added to list\n");
+         current_processor = get_processor_pointer(p, m);
       }
    }
 
-/*   printf("Task assigned to %d processors:\n", m);
-   print_processor_list(p)*/;
+//    printf("Task assigned to %d processors:\n", m);
+//    print_processor_list(p);
 
    if (no_proc) {
       if (m <= no_proc) {
@@ -222,17 +205,16 @@ processor_t*  start_rm_wf_ll(int nproc, char *file )
       printf("%d", m);
       return p;
    }
-
    return NULL;
 }
 
-processor_t*  start_rm_wf_ll_main(int argc, char *argv[] )
+processor_t*  start_rm_nf_ip_main(int argc, char *argv[] )
 {
    if (argc != 3) {
      fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return NULL;
    }
 
-	return start_rm_nf_ll(atoi(argv[1]), argv[2]);
+	return start_rm_nf_ip(atoi(argv[1]), argv[2]);
    
 }

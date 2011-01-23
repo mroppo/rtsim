@@ -149,7 +149,6 @@ double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
    new_processor.status = PROCESSOR_BUSY;
    new_processor.task = NULL;
    p = add_processor_list(p, new_processor);
-	current_processor = p;
 
    task = t;                          /* assign tasks to processors */
    while (task) {

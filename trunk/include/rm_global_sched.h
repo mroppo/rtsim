@@ -15,6 +15,11 @@
 #include "rm_bf_ll.h"
 #include "rm_ff_ll.h"
 #include "rm_wf_ll.h"
+#include "rm_ff_du_uo.h"
+#include "rm_ff_ip.h"
+#include "rm_gt.h"
+#include "rm_nf_ip.h"
+#include "rm_st.h"
 
 extern int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basename_trace);
 extern int start_rm_main(ALGORITHM_PARAMS parameters);
@@ -26,6 +31,15 @@ typedef enum
 	RM_PARTIAL_BF_LL,
 	RM_PARTIAL_FF_LL,
 	RM_PARTIAL_WF_LL,
+
+	RM_PARTIAL_FF_DU_UO,
+	RM_PARTIAL_FF_IP,
+	RM_PARTIAL_GT,
+	RM_PARTIAL_NF_IP,
+	RM_PARTIAL_ST,
+
+
+
 	RM_PARTIAL_COUNT,
 }RM_PARTIAL_MODE;
 
