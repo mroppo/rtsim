@@ -1049,6 +1049,7 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 				list = start_rm_wf_ll(1, parameters.data);
 			break;
 
+			
 			case RM_PARTIAL_FF_DU_UO:
 				list = start_rm_ff_du_uo(1, parameters.data);
 			break;
@@ -1063,6 +1064,23 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 			break;
 			case RM_PARTIAL_ST:
 				list = start_rm_st(1, parameters.data);
+			break;
+
+			
+			case RM_PARTIAL_BF_IP:
+				list = start_rm_bf_ip(1, parameters.data);
+			break;
+			case RM_PARTIAL_BF_DU_UO:
+				list = start_rm_bf_du_uo(1, parameters.data);
+			break;
+			case RM_PARTIAL_RBOUND_MP:
+				list = start_rbound_mp(1, parameters.data);
+			break;
+			case RM_PARTIAL_RBOUND_MP_BF:
+				list = start_rbound_mp_bf(1, parameters.data);
+			break;
+			case RM_PARTIAL_RBOUND_MP_NFR:
+				list = start_rbound_mp_nfr(1, parameters.data);
 			break;
 
 

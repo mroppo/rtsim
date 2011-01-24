@@ -21,6 +21,12 @@
 #include "rm_nf_ip.h"
 #include "rm_st.h"
 
+#include "rm_bf_ip.h"
+#include "rm_bf_du_uo.h"
+#include "rbound_mp.h"
+#include "rbound_mp_bf.h"
+#include "rbound_mp_nfr.h"
+
 extern int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basename_trace);
 extern int start_rm_main(ALGORITHM_PARAMS parameters);
 extern void print_rm_usage();
@@ -38,7 +44,11 @@ typedef enum
 	RM_PARTIAL_NF_IP,
 	RM_PARTIAL_ST,
 
-
+	RM_PARTIAL_BF_IP,
+	RM_PARTIAL_BF_DU_UO,
+	RM_PARTIAL_RBOUND_MP,
+	RM_PARTIAL_RBOUND_MP_BF,
+	RM_PARTIAL_RBOUND_MP_NFR,
 
 	RM_PARTIAL_COUNT,
 }RM_PARTIAL_MODE;

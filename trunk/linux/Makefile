@@ -27,6 +27,11 @@ objects = $(UTILS_DIR)/task_lists.o\
 	$(UTILS_DIR)/rm_gt.o\
 	$(UTILS_DIR)/rm_nf_ip.o\
 	$(UTILS_DIR)/rm_st.o\
+	$(UTILS_DIR)/rm_bf_ip.o\
+	$(UTILS_DIR)/rm_bf_du_uo.o\
+	$(UTILS_DIR)/rbound_mp.o\
+	$(UTILS_DIR)/rbound_mp_bf.o\
+	$(UTILS_DIR)/rbound_mp_nfr.o\
 	$(UTILS_DIR)/edf_nf.o\
 	$(UTILS_DIR)/edf_ff.o\
 	$(UTILS_DIR)/edf_bf.o\

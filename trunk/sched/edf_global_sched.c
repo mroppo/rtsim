@@ -131,11 +131,6 @@ int start_edf(int mode, int no_proc, double max_time, task_set_t *t, char* outfi
 	///////////////////////////////
 #endif
 
-#ifdef USE_THREAD
-	pthread_mutex_lock(&edf_mutex); 
-		edf_active_threads ++;
-	pthread_mutex_unlock(&edf_mutex); 
-#endif
 
 
 	strcpy(basename_trace, outfile);
@@ -721,7 +716,12 @@ int start_edf_main(ALGORITHM_PARAMS parameters)
 			if( res != 0)
 				printf("\n Error no se pudo crear el hilo");
 			else
+			{
 				printf("\nnew thread created...");
+				pthread_mutex_lock(&edf_mutex); 
+					edf_active_threads ++;
+				pthread_mutex_unlock(&edf_mutex); 
+			}
 #else
 			res += start_rm(mode, 1, max_time, t, partialname);
 #endif
