@@ -59,13 +59,13 @@
 
 processor_t* start_edf_wf(int nproc, char *file)
 {
-task_set_t *t=NULL;                 /* Head of task set's list */
-processor_t *p=NULL;                /* Head of processor's list */
+	task_set_t *t=NULL;                 /* Head of task set's list */
+	processor_t *p=NULL;                /* Head of processor's list */
 
-int n;                             /* Number of tasks */
-int m;                             /* Number of processors */
-float util;                        /* system's total utilization  */
-double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
+	int n;                             /* Number of tasks */
+	int m;                             /* Number of processors */
+	float util;                        /* system's total utilization  */
+	double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
 
 
    FILE *in_file;  /* Input file */
@@ -104,10 +104,10 @@ double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
       /* convert number */
       if (line[0] != '#') {
 			sscanf(line, "%f%f%f", &period, &wcet, &phase);
-	 new_task.id = ++n;
-	 new_task.t= (double) period;
-	 new_task.c= (double) wcet;
-			new_task.f = (double) phase;
+	new_task.id = ++n;
+	new_task.t= (double) period;
+	new_task.c= (double) wcet;
+	new_task.f = (double) phase;
          t = add_task_list_t_sorted(t, new_task);
          // printf("added task %d =\t%.2f\t%.2f\n", new_task.id, new_task.t, new_task.c);
      }
@@ -187,7 +187,7 @@ double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
             new_processor.id = m;                              /* create an empty processor */
             new_processor.u = 0.0;
             new_processor.n = 0;
-	    new_processor.status = PROCESSOR_BUSY;
+			new_processor.status = PROCESSOR_BUSY;
             new_processor.task = NULL;
             p = add_processor_list_u_sorted(p, new_processor);
             current_processor = get_processor_pointer(p, m);
@@ -211,6 +211,8 @@ double bound = 1.0;                /* schedulability bound (Liu and Layland)  */
 
    return NULL;
 }
+
+
 processor_t* start_edf_wf_main(int argc, char *argv[])
 {
 	if (argc != 3) {

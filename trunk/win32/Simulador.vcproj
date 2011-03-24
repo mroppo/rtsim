@@ -1820,6 +1820,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\utils\rm_exactLehoczky.c"
+					>
+				</File>
+				<File
+					RelativePath="..\include\rm_exactLehoczky.h"
+					>
+				</File>
+				<File
 					RelativePath="..\utils\rm_ff_du_uo.c"
 					>
 				</File>

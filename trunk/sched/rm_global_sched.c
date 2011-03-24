@@ -1136,10 +1136,10 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 
 			sprintf(&partialname, "%s_partial%d",basename_trace,current_processor->id);
 #ifdef USE_THREAD
-			args.mode	= mode;
+			args.mode		= mode;
 			args.no_proc	= 1;
 			args.max_time	= max_time;
-			args.task	= t;
+			args.task		= t;
 			args.outfile	= partialname;
 
 			res = pthread_create(&thread_task, NULL, thread_start_rm, &args);
