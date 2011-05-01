@@ -43,9 +43,11 @@ includes = $(INCLUDE_DIR)/*.h
 
 all : $(app)
 
+so: $(schedulers) $(objects) $(includes)
+	gcc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o lib$(APP_NAME).so -DUSE_TCL_STUBS -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
 
 main : $(schedulers) $(objects) $(includes)
-	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o lib$(APP_NAME).so -DUSE_TCL_STUBS -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm $(CC_OPT)
 
 rm_global_sched.o : $(objects) $(includes)
 	cc -c $(SCHED_DIR)/rm_global_sched.c $(CC_OPT)
