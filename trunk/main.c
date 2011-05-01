@@ -1,6 +1,26 @@
 #include "./include/main.h"
 
 
+int SimulatorCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
+    printf("called with %d arguments\n", objc);
+    return TCL_OK;
+}
+int Simulator_Init(Tcl_Interp *interp) {
+	printf("Simulator_Init");
+    if (Tcl_InitStubs(interp, "8.4", 0) == NULL) {
+		return TCL_ERROR;
+    }
+    printf("creating Simulator command");
+    Tcl_CreateObjCommand(interp, "Simulator", SimulatorCmd, NULL, NULL);
+    
+	
+	Tcl_PkgProvide(interp, "Simulator", "1.1");
+
+	return TCL_OK;
+
+	
+}
+
 
 void printUsage(int method)
 {
@@ -57,6 +77,14 @@ int main(int argc, char *argv[])
 	//char params[6][255];
 	ALGORITHM_PARAMS parameters;
 	//	char*args = argv;
+	int i=0;
+
+	for(i=0;i<argc;i++)
+	{
+		printf("\n %d: %s",i,argv[i]);
+	}
+
+
 
 	if (argc > 2) {
 

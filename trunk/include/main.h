@@ -7,4 +7,9 @@
 #include "fifo_global_sched.h"
 
 
+#include <tcl.h>
+#include <stdio.h>
+extern int SimulatorCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+extern int Simulator_Init(Tcl_Interp *interp);
+
 
