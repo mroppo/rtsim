@@ -390,25 +390,26 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 			# Load the extension
 			# switch $tcl_platform(platform) {
 			   # windows {
-				  load [file join [pwd] $APP_PATH/AlgorithmsLibraries/$algorithmProcedure.dll]
+				#  load [file join [pwd] $APP_PATH/AlgorithmsLibraries/$algorithmProcedure.so]
 			   # }
 			   # unix {
 				  # load [file join [pwd] lib+$algorithmProcedure[info sharedlibextension]]
 			   # }
 			# }
-				# #set r [catch {load $APP_PATH/AlgorithmsLibraries/./$algorithmSelected[info sharedlibextension]} err]
+				set r [catch {load $APP_PATH/AlgorithmsLibraries/$algorithmProcedure[info sharedlibextension]} err]
 				# set r [catch {load $APP_PATH/AlgorithmsLibraries/$algorithmProcedure} err]
-				# if {$r} {
-					# tk_messageBox -icon error -title "Show camera error" -message $err
-				# }
-				# puts "$algorithmProcedure $numberProcessors $simulationTime $pathSavedTasks"
+				if {$r} {
+					tk_messageBox -icon error -title "Show camera error" -message $err
+				}
+				#puts "$algorithmProcedure $numberProcessors $simulationTime $pathSavedTasks"
 
+				puts "$APP_PATH/AlgorithmsLibraries/simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
-        		# set r [catch { eval $APP_PATH/AlgorithmsLibraries/$algorithmProcedure $numberProcessors $simulationTime $pathSavedTasks } errmsg]
-				# if {$r} {
-					# tk_messageBox -icon error -title "Show camera error" -message $errmsg
-				# }
-				# puts "Failed - $errmsg"
+        			set r [catch {eval $APP_PATH/AlgorithmsLibraries/simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+				if {$r} {
+					tk_messageBox -icon error -title "Show camera error" -message $errmsg
+				}
+				
 				
 				
 				#set r [catch { exec $APP_PATH/AlgorithmsLibraries/$algorithmProcedure $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
