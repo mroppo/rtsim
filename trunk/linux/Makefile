@@ -44,7 +44,7 @@ includes = $(INCLUDE_DIR)/*.h
 all : $(app)
 
 so: $(schedulers) $(objects) $(includes)
-	gcc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o ./../RealTSS/AlgorithmsLibraries/lib$(APP_NAME).so -DUSE_TCL_STUBS -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+	gcc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o ./../RealTSS/AlgorithmsLibraries/lib$(APP_NAME).so -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
 
 main : $(schedulers) $(objects) $(includes)
 	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm $(CC_OPT)

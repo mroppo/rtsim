@@ -1,27 +1,6 @@
 #include "./include/main.h"
 
 
-int SimulatorCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]) {
-    printf("called with %d arguments\n", objc);
-    return TCL_OK;
-}
-int Simulator_Init(Tcl_Interp *interp) {
-	printf("Simulator_Init");
-    if (Tcl_InitStubs(interp, "8.4", 0) == NULL) {
-		return TCL_ERROR;
-    }
-    printf("creating Simulator command");
-    Tcl_CreateObjCommand(interp, "Simulator", SimulatorCmd, NULL, NULL);
-    
-	
-	Tcl_PkgProvide(interp, "Simulator", "1.1");
-
-	return TCL_OK;
-
-	
-}
-
-
 void printUsage(int method)
 {
 	printf("Simulator Usage: \n ./simulator.run method processors time taskfile");
@@ -68,7 +47,45 @@ void printUsage(int method)
 	printf("\n");
 }
 
+#ifdef SIMLUATOR_LIB_TCL
+
+
+static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) {
+	int res =     TCL_OK;
+	char* strings[255];
+	int t = 0;
+printf("\n called with %d arguments\n", objc);
+
+for(t=0;t<objc;t++)
+{
+	printf("\n%d: %s",t, (*objv[t]).bytes);
+	strings[t] = (*objv[t]).bytes;
+}
+	res = simulator_main(objc, strings);
+
+
+printf("\n end main: %d",res);
+return res;
+//return TCL_OK;
+}
+int Simulator_Init(Tcl_Interp *interp) {
+	printf("\nSimulator_Init");
+	//ClientData data;
+    if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
+	return TCL_ERROR;
+    }
+    printf("\ncreating simulator command");
+    Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
+    Tcl_PkgProvide(interp, "simulator", "1.1");
+
+return TCL_OK;
+}
+
+
+int simulator_main(int argc, char* argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
 	MENU_ITEM method = -1;
 	int res = -1;
@@ -83,7 +100,7 @@ int main(int argc, char *argv[])
 	{
 		printf("\n %d: %s",i,argv[i]);
 	}
-
+	printf("\n");
 
 
 	if (argc > 2) {
@@ -251,9 +268,14 @@ int main(int argc, char *argv[])
 
 	if (res == -1) {
 		printUsage(method);
+	} else
+	{
+		printf("\nEnd: %d",res);
 	}
 
-
+	
 
 	return(res);
 }
+
+

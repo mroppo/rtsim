@@ -399,15 +399,20 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 				set r [catch {load $APP_PATH/AlgorithmsLibraries/$algorithmProcedure[info sharedlibextension]} err]
 				# set r [catch {load $APP_PATH/AlgorithmsLibraries/$algorithmProcedure} err]
 				if {$r} {
-					tk_messageBox -icon error -title "Show camera error" -message $err
+					tk_messageBox -icon error -title "Error" -message $err
 				}
 				#puts "$algorithmProcedure $numberProcessors $simulationTime $pathSavedTasks"
 
-				puts "$APP_PATH/AlgorithmsLibraries/simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
+				#set r [catch { insertResultsBox [getResultsBoxFrame] $resultAlg  } errmsg]
+
+
+				puts "simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
-        			set r [catch {eval $APP_PATH/AlgorithmsLibraries/simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+        			set r [catch {eval simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+				set r [catch { insertResultsBox [getResultsBoxFrame] $resultAlg  } errmsg]
+
 				if {$r} {
-					tk_messageBox -icon error -title "Show camera error" -message $errmsg
+					tk_messageBox -icon error -title "Error" -message $errmsg
 				}
 				
 				
@@ -418,7 +423,7 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 				# }
 				# puts "Failed - $errmsg"
 				
-				set r [catch { insertResultsBox [getResultsBoxFrame] $resultAlg  } errmsg]
+				
 				# if {$r} {
 					# tk_messageBox -icon error -title "Show camera error" -message $err
 				# }
