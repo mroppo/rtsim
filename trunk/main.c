@@ -50,35 +50,36 @@ void printUsage(int method)
 #ifdef SIMLUATOR_LIB_TCL
 
 
-static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) {
+static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) 
+{
 	int res =     TCL_OK;
 	char* strings[255];
 	int t = 0;
-printf("\n called with %d arguments\n", objc);
+	printf("\n called with %d arguments\n", objc);
 
-for(t=0;t<objc;t++)
-{
-	printf("\n%d: %s",t, (*objv[t]).bytes);
-	strings[t] = (*objv[t]).bytes;
-}
+	for(t=0;t<objc;t++)
+	{
+		printf("\n%d: %s",t, (*objv[t]).bytes);
+		strings[t] = (*objv[t]).bytes;
+	}
 	res = simulator_main(objc, strings);
 
-
-printf("\n end main: %d",res);
-return res;
-//return TCL_OK;
+	printf("\n end main: %d",res);
+	return res;
 }
-int Simulator_Init(Tcl_Interp *interp) {
+
+int Simulator_Init(Tcl_Interp *interp)
+{
 	printf("\nSimulator_Init");
 	//ClientData data;
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
-	return TCL_ERROR;
+		return TCL_ERROR;
     }
     printf("\ncreating simulator command");
     Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
     Tcl_PkgProvide(interp, "simulator", "1.1");
 
-return TCL_OK;
+	return TCL_OK;
 }
 
 

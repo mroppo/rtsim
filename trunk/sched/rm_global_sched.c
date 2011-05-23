@@ -71,6 +71,115 @@ typedef enum
 }RM_PARAMS;
 
 
+
+#ifdef SIMLUATOR_LIB_TCL
+static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) 
+{
+	int res =     TCL_OK;
+	char* strings[255];
+	int t = 0;
+	ALGORITHM_PARAMS parameters;
+	
+	printf("\n called with %d arguments\n", objc);
+	for(t=0;t<objc;t++)
+	{
+		printf("\n%d: %s",t, (*objv[t]).bytes);
+		strings[t] = (*objv[t]).bytes;
+	}
+
+
+#ifdef SCHED_GLOBAL
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_GLOBAL;
+	parameters.partial_func = 0;
+#elif defined SCHED_PARTIAL_NF_LL
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_NF_LL;
+#elif defined SCHED_PARTIAL_BF_LL
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_BF_LL;
+#elif defined SCHED_PARTIAL_FF_LL
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_FF_LL;
+#elif defined SCHED_PARTIAL_WF_LL
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_WF_LL;
+#elif defined SCHED_PARTIAL_FF_DU_UO
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_FF_DU_UO;
+#elif defined SCHED_PARTIAL_FF_IP
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_FF_IP;
+#elif defined SCHED_PARTIAL_GT
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_GT;
+#elif defined SCHED_PARTIAL_NF_IP
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_NF_IP;
+#elif defined SCHED_PARTIAL_ST
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_ST;
+#elif defined SCHED_PARTIAL_BF_IP
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_BF_IP;
+#elif defined SCHED_PARTIAL_BF_DU_UO
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_BF_DU_UO;
+#elif defined SCHED_PARTIAL_RBOUND_MP
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_RBOUND_MP;
+#elif defined SCHED_PARTIAL_RBOUND_MP_BF
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_RBOUND_MP_BF;
+#elif defined SCHED_PARTIAL_RBOUND_MP_NFR
+	parameters.algorithm	= RM;
+	parameters.mode			= MODE_PARTIAL;
+	parameters.partial_func = RM_PARTIAL_RBOUND_MP_NFR;
+#else
+	#error no sched defined
+#endif
+			
+		parameters.processor	= atoi(strings[2]);
+		parameters.time			= atoi(strings[3]);
+		strcpy(parameters.data, strings[4]);
+
+		parameters.param_count = objc - 2;
+		
+		res = start_rm_main(parameters);
+		//res = simulator_main(objc, strings);
+
+	printf("\n end main: %d",res);
+	return res;
+}
+
+int Simulator_Init(Tcl_Interp *interp)
+{
+	printf("\nSimulator_Init");
+	//ClientData data;
+    if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
+		return TCL_ERROR;
+    }
+    printf("\ncreating simulator command");
+    Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
+    Tcl_PkgProvide(interp, "simulator", "1.1");
+
+	return TCL_OK;
+}
+#endif
+
 #ifdef USE_THREAD
 
 pthread_mutex_t rm_mutex; 
@@ -1024,7 +1133,8 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 
 		res = start_rm(mode,no_proc, max_time, t, basename_trace);
 
-	}else if(mode == MODE_PARTIAL)		//partial mode
+	}
+	else if(mode == MODE_PARTIAL)		//partial mode
 	{
 
 #ifdef USE_THREAD
