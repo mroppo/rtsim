@@ -73,7 +73,7 @@ typedef enum
 
 
 #ifdef SIMLUATOR_LIB_TCL
-static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) 
+static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) 
 {
 	int res =     TCL_OK;
 	char* strings[255];
@@ -165,18 +165,19 @@ static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc
 	return res;
 }
 
-int Simulator_Init(Tcl_Interp *interp)
+int Rmnfll_Init(Tcl_Interp *interp)
 {
-	printf("\nSimulator_Init");
+printf("\nrmffll_Init");
 	//ClientData data;
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
-		return TCL_ERROR;
+printf("\nerror ");
+	return TCL_ERROR;
     }
-    printf("\ncreating simulator command");
-    Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
+printf("\ncreating simulator command");
+    Tcl_CreateObjCommand(interp, "simulator", RmnfllCmd, NULL, NULL);
     Tcl_PkgProvide(interp, "simulator", "1.1");
 
-	return TCL_OK;
+return TCL_OK;
 }
 #endif
 
@@ -1045,24 +1046,26 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 		return -1;
 	}*/
 
+	printf("evaluating params\n");
 	mode = parameters.mode;//atoi(argv[argid+PARAM_MODE]);
 	if (mode < 0 || mode >= MODE_COUNT) {
 		fprintf(stderr, "Error: invalid mode, use 0 for global or 1 for partial %d\n", mode);
+printf("error mode\n");
 		return -1;
 	}
-
+printf("error mode\n");	
 	no_proc = parameters.processor;//atoi(argv[argid+PARAM_NOPROC]);
 	if (no_proc <= 0) {
-		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", no_proc);		
+		fprintf(stderr, "Error: number of processor must be > 0 (%s)\n", no_proc);	
 		return -1;
 	}
-
+printf("error mode\n");	
 	max_time = (double) parameters.time;//atoi(argv[argid + PARAM_MAXTIME]);
 	if (max_time < 0) {
 		fprintf(stderr, "Error: simulation time must be >= 0 (%s)\n", max_time); //argv[argid + PARAM_MAXTIME]);
 		return -1;
 	}
-
+printf("error mode\n");	
 	//in_file = fopen(argv[argid + PARAM_FILE], "r");
 	in_file = fopen(parameters.data, "r");
 	if (in_file == NULL) {

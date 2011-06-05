@@ -27,6 +27,11 @@
 #include "rbound_mp_bf.h"
 #include "rbound_mp_nfr.h"
 
+#ifdef SIMLUATOR_LIB_TCL
+	#include <tcl.h>
+	#include <stdio.h>
+#endif
+
 extern int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* basename_trace);
 extern int start_rm_main(ALGORITHM_PARAMS parameters);
 extern void print_rm_usage();

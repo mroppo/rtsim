@@ -565,7 +565,7 @@ proc makeMenuBar { frameParent parent args} {
 	
 	#Run items menu
 	#$run add command -label "[searchCommand SIMULATE]" -command { simulate $pathSavedTasks [searchAlgLib $algorithmSelected] $algorithmSelected [getResultsBoxFrame] } -underline 1 ;					#Simulate option
-	$run add command -label "[searchCommand SIMULATE]" -command { simulate $pathSavedTasks libsimulator $algorithmSelected [getResultsBoxFrame] } -underline 1 ;					#Simulate option
+	$run add command -label "[searchCommand SIMULATE]" -command { simulate $pathSavedTasks librmnfll $algorithmSelected [getResultsBoxFrame] } -underline 1 ;					#Simulate option
 	$run add command -label "[searchCommand OPEN_KIWI]" -command { loadTraceKiwi } -underline 1 ;				#Open kiwi option
 	
 	#Build items menu

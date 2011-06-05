@@ -1,4 +1,3 @@
-
 MAIN_DIR = ../
 SCHED_DIR = ../sched
 UTILS_DIR = ../utils
@@ -41,10 +40,16 @@ app = $(objects) $(schedulers) main
 #includes = $(INCLUDE_DIR)/task.h $(INCLUDE_DIR)/processor.h $(INCLUDE_DIR)/sched_event.h
 includes = $(INCLUDE_DIR)/*.h
 
-all : $(app)
+all : $(app) $(so)
 
-so: $(schedulers) $(objects) $(includes)
-	gcc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o ./../RealTSS/AlgorithmsLibraries/lib$(APP_NAME).so -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+so: $(objects) $(includes)
+# compile rm global sched
+	#gcc $(SCHED_DIR)/rm_global_sched.c $(objects) -shared -o ./../RealTSS/AlgorithmsLibraries/libRM_Global.so -DSCHED_GLOBAL -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+	#echo .....................................
+# compile rm partial NF LL
+	gcc $(SCHED_DIR)/rm_global_sched.c $(objects) -shared -o ./../RealTSS/AlgorithmsLibraries/librmnfll.so -DSCHED_PARTIAL_NF_LL -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+	echo .....................................
+
 
 main : $(schedulers) $(objects) $(includes)
 	cc $(MAIN_DIR)/main.c $(objects) $(schedulers) -o $(APP_NAME).run -lm $(CC_OPT)
@@ -64,17 +69,17 @@ edf_deadlines_global_sched.o : $(objects) $(includes)
 rm_deadlines_global_sched.o : $(objects) $(includes)
 	cc $(SCHED_DIR)/rm_deadlines_global_sched.c $(CC_OPT)
 
-$(UTILS_DIR)/task_lists.o :$(UTILS_DIR)/task_lists.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c task_lists.c $(CC_OPT)
+#$(UTILS_DIR)/task_lists.o :$(UTILS_DIR)/task_lists.c $(includes)
+#	@cd $(UTILS_DIR) ; cc -c task_lists.c $(CC_OPT)
 
-$(UTILS_DIR)/processor_lists.o : $(UTILS_DIR)/processor_lists.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c processor_lists.c $(CC_OPT)
+#$(UTILS_DIR)/processor_lists.o : $(UTILS_DIR)/processor_lists.c $(includes)
+#	@cd $(UTILS_DIR) ; cc -c processor_lists.c $(CC_OPT)
 
-$(UTILS_DIR)/sched_events.o : $(UTILS_DIR)/sched_events.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c sched_events.c $(CC_OPT)
+#$(UTILS_DIR)/sched_events.o : $(UTILS_DIR)/sched_events.c $(includes)
+#	@cd $(UTILS_DIR) ; cc -c sched_events.c $(CC_OPT)
 
-$(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
-	@cd $(UTILS_DIR) ; cc -c trace_event.c $(CC_OPT)
+#$(UTILS_DIR)/trace_event.o : $(UTILS_DIR)/trace_event.c $(includes)
+#	@cd $(UTILS_DIR) ; cc -c trace_event.c $(CC_OPT)
 
 # $(UTILS_DIR)/rm_nf_ll.o : $(UTILS_DIR)/rm_nf_ll.c $(includes)
 	# @cd $(UTILS_DIR) ; cc -c rm_nf_ll.c $(CC_OPT)
