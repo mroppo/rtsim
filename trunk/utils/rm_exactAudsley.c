@@ -60,13 +60,13 @@ int start_rm_exactAudsley(int nproc, char *file)
 	float r, s, x, period, wcet, phase;
 
 	// if (argc != 2) {
-	 // fprintf(stderr,"You must supply a file name (see README file for details)\n");
+	 // LOG("You must supply a file name (see README file for details)\n");
 	 // return -1;
 	// }
 
 	in_file = fopen(file, "r");
 	if (in_file == NULL) {
-	  fprintf(stderr,"Error:Unable to open %s file\n", file);
+	  LOG("Error:Unable to open %s file\n", file);
 	  return -1;
 	}
 
@@ -93,7 +93,7 @@ int start_rm_exactAudsley(int nproc, char *file)
 	}
 
 	if (!n) {
-		fprintf(stderr, "Error: empty file %s\n", file);
+		LOG( "Error: empty file %s\n", file);
 	  return -1;
 	}
 
@@ -140,7 +140,7 @@ int start_rm_exactAudsley(int nproc, char *file)
 int start_rm_exactAudsley_main(int argc, char *argv[])
 {
 	if (argc != 3) {
-		fprintf(stderr, "You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+		LOG( "You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
 		return 0;
 	}
 

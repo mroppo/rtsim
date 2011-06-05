@@ -3,48 +3,48 @@
 
 void printUsage(int method)
 {
-	printf("Simulator Usage: \n ./simulator.run method processors time taskfile");
-	printf("\n methods:");
-	printf("\n   0: EDF Global");
-	printf("\n   1: EDF Partial NF");
-	printf("\n   2: EDF Partial FF");
-	printf("\n   3: EDF Partial BF");
-	printf("\n   4: EDF Partial WF");
+	LOG("Simulator Usage: \n ./simulator.run method processors time taskfile");
+	LOG("\n methods:");
+	LOG("\n   0: EDF Global");
+	LOG("\n   1: EDF Partial NF");
+	LOG("\n   2: EDF Partial FF");
+	LOG("\n   3: EDF Partial BF");
+	LOG("\n   4: EDF Partial WF");
 
 
 
-	printf("\n   5: RM Global");
-	printf("\n   6: RM Partial NF LL");
-	printf("\n   7: RM Partial BF LL");
-	printf("\n   8: RM Partial FF LL");
-	printf("\n   9: RM Partial WF LL");
+	LOG("\n   5: RM Global");
+	LOG("\n   6: RM Partial NF LL");
+	LOG("\n   7: RM Partial BF LL");
+	LOG("\n   8: RM Partial FF LL");
+	LOG("\n   9: RM Partial WF LL");
 
-	printf("\n   10: RM Partial FF DU UO");
-	printf("\n   11: RM Partial FF IP");
-	printf("\n   12: RM Partial GT");
-	printf("\n   13: RM Partial NF IP");
-	printf("\n   14: RM Partial ST");
+	LOG("\n   10: RM Partial FF DU UO");
+	LOG("\n   11: RM Partial FF IP");
+	LOG("\n   12: RM Partial GT");
+	LOG("\n   13: RM Partial NF IP");
+	LOG("\n   14: RM Partial ST");
 
-	printf("\n   15: RM Partial BF IP");
-	printf("\n   16: RM Partial BF DU UO");
-	printf("\n   17: RM Partial MP");
-	printf("\n   18: RM Partial MP BF");
-	printf("\n   19: RM Partial MP NFR");
+	LOG("\n   15: RM Partial BF IP");
+	LOG("\n   16: RM Partial BF DU UO");
+	LOG("\n   17: RM Partial MP");
+	LOG("\n   18: RM Partial MP BF");
+	LOG("\n   19: RM Partial MP NFR");
 	
 
-	printf("\n   20: EDF With Deadlines");
-	printf("\n   21: RM With Deadlines");
-	printf("\n   22: FIFO");
-	/*printf("\n mode:");
-	printf("\n   0: Global");
-	printf("\n   1: Partial");*/
-	printf("\n processors:");
-	printf("\n   number processors used, should be > 0");
-	printf("\n time:");
-	printf("\n   simulation time , set 0 for calculate lcm");
-	printf("\n taskfile:");
-	printf("\n   path to file with task information");
-	printf("\n");
+	LOG("\n   20: EDF With Deadlines");
+	LOG("\n   21: RM With Deadlines");
+	LOG("\n   22: FIFO");
+	/*LOG("\n mode:");
+	LOG("\n   0: Global");
+	LOG("\n   1: Partial");*/
+	LOG("\n processors:");
+	LOG("\n   number processors used, should be > 0");
+	LOG("\n time:");
+	LOG("\n   simulation time , set 0 for calculate lcm");
+	LOG("\n taskfile:");
+	LOG("\n   path to file with task information");
+	LOG("\n");
 }
 
 #ifdef SIMLUATOR_LIB_TCL
@@ -55,27 +55,27 @@ static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc
 	int res =     TCL_OK;
 	char* strings[255];
 	int t = 0;
-	printf("\n called with %d arguments\n", objc);
+	LOG("\n called with %d arguments\n", objc);
 
 	for(t=0;t<objc;t++)
 	{
-		printf("\n%d: %s",t, (*objv[t]).bytes);
+		LOG("\n%d: %s",t, (*objv[t]).bytes);
 		strings[t] = (*objv[t]).bytes;
 	}
 	res = simulator_main(objc, strings);
 
-	printf("\n end main: %d",res);
+	LOG("\n end main: %d",res);
 	return res;
 }
 
 int Simulator_Init(Tcl_Interp *interp)
 {
-	printf("\nSimulator_Init");
+	LOG("\nSimulator_Init");
 	//ClientData data;
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 		return TCL_ERROR;
     }
-    printf("\ncreating simulator command");
+    LOG("\ncreating simulator command");
     Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
     Tcl_PkgProvide(interp, "simulator", "1.1");
 
@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 
 	for(i=0;i<argc;i++)
 	{
-		printf("\n %d: %s",i,argv[i]);
+		LOG("\n %d: %s",i,argv[i]);
 	}
-	printf("\n");
+	LOG("\n");
 
 
 	if (argc > 2) {
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 		printUsage(method);
 	} else
 	{
-		printf("\nEnd: %d",res);
+		LOG("\nEnd: %d",res);
 	}
 
 	

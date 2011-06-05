@@ -534,7 +534,7 @@ proc makeMenuBar { frameParent parent args} {
 	menu $build -tearoff 0
 	menu $help -tearoff 0
 	
-	# menu $tools -tearoff 0
+	menu $tools -tearoff 0
 	menu $algorithms -tearoff 0
 	menu $typeTest -tearoff 0
 	
@@ -543,7 +543,7 @@ proc makeMenuBar { frameParent parent args} {
 	$frameParent.menu add cascade -label "[searchCommand SETTINGS_MENU]" -menu $settings -underline 0
 	$frameParent.menu add cascade -label "[searchCommand RUN_MENU]" -menu $run -underline 0
 	$frameParent.menu add cascade -label "[searchCommand BUILD_MENU]" -menu $build -underline 0
-	# $frameParent.menu add cascade -label "[searchCommand TOOLS_MENU]" -menu $tools -underline 0
+	$frameParent.menu add cascade -label "[searchCommand TOOLS_MENU]" -menu $tools -underline 0
 	$frameParent.menu add cascade -label "[searchCommand HELP]" -menu $help -underline 0
 	
 	
@@ -554,8 +554,8 @@ proc makeMenuBar { frameParent parent args} {
 	$files add command -label "[searchCommand SAVE_AS]" -command { saveAsTasksCommand } -underline 1 ;		#Save as file option
 #	$files add command -label "TEST BUTTON" -command { testCodeButton [getTableTasksFrame] } -underline 1 ;		#Save as file option
 	
-	# $files add separator
-	# $files add command -label "[searchCommand PRINT]" -command { printTasksCommand } -underline 1 -state disabled;			#Print option
+	$files add separator
+	$files add command -label "[searchCommand PRINT]" -command { printTasksCommand } -underline 1 -state disabled;			#Print option
 	$files add separator
 	$files add command -label "[searchCommand EXIT]" -command "destroy $parent"
 	
@@ -596,9 +596,9 @@ proc makeMenuBar { frameParent parent args} {
 	
 	
 	
-	# #Tools items menu
-	# $tools add command -label "[searchCommand LANGUAGE_MENU]" -command {  languageSelectionWindow } -underline 0
-	# $tools add command -label "[searchCommand PREFERENCES_MENU]" -command {  languageSelectionWindow } -underline 0 -state disabled
+	#Tools items menu
+	$tools add command -label "[searchCommand LANGUAGE_MENU]" -command {  languageSelectionWindow } -underline 0
+	$tools add command -label "[searchCommand PREFERENCES_MENU]" -command {  languageSelectionWindow } -underline 0 -state disabled
 	
 	#Help items menu
 	$help add command -label "[searchCommand HELP_CONTENTS]" -underline 0 -command { testButtons [searchCommand HELP_CONTENTS] } -state disabled

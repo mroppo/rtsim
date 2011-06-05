@@ -566,7 +566,7 @@ task_set_t * del_task_from_list(task_set_t * list, int id)
 			free(next);
 		}
 	}
-	// printf("Deleted task %d\n", id);
+	// LOG("Deleted task %d\n", id);
 	return list;
 }
 
@@ -612,10 +612,10 @@ void print_task_list(task_set_t * list)
 {
 	task_set_t * item = list;
 
-	printf("Task set (period, execution time):\n");
+	LOG("Task set (period, execution time):\n");
 
 	while (item) {
-		printf("task %d =\t%.2f\t%.2f\n", item -> id, item -> t, item -> c);
+		LOG("task %d =\t%.2f\t%.2f\n", item -> id, item -> t, item -> c);
 		item = (task_set_t *) item -> next;
 	}
 }
@@ -666,10 +666,10 @@ void print_task_list_s(task_set_t * list)
 {
 	task_set_t * item = list;
 
-	printf("Task set (Si, period, execution time):\n");
+	LOG("Task set (Si, period, execution time):\n");
 
 	while (item) {
-		printf("task %d =\t%2.5f\t%.2f\t%.2f\n", item -> id, item -> s, item -> t, item -> c);
+		LOG("task %d =\t%2.5f\t%.2f\t%.2f\n", item -> id, item -> s, item -> t, item -> c);
 		item = (task_set_t *) item -> next;
 	}
 }
@@ -895,7 +895,7 @@ int get_roots_hc_list(s_t * list, float ele)
 	while (item) {
 		r++; /* explore a new harmonic chain */
 		root = get_hc_list_tail(item);
-		// printf("\nroot found = %d\n", root);
+		// LOG("\nroot found = %d\n", root);
 		is_root = 1; /* suppose we got a new root  */
 		item_temp = list;
 		while (item_temp && is_root) {
@@ -922,10 +922,10 @@ void print_s_list(s_t * list)
 	s_t * item = list;
 	int i = 0;
 
-	printf("\nScheduling points:\n");
+	LOG("\nScheduling points:\n");
 
 	while (item) {
-		printf("S[%d] =\t%.3f\t%.3f\n", i, item -> s, item -> r);
+		LOG("S[%d] =\t%.3f\t%.3f\n", i, item -> s, item -> r);
 		item = (s_t *) item -> next;
 		i++;
 	}
@@ -944,19 +944,19 @@ s_t * get_harmonic_chains_hc_list(task_set_t * list, int * h)
 
 	while (tp) {
 		base = tp -> t;
-		//printf("BASE = %d\n", base);
+		//LOG("BASE = %d\n", base);
 		new_s.s = tp -> t;
 		new_s.id = tp -> id;
 		hc = add_hc_list(hc, new_s);
 		//print_s_list(hc);
 		tp = del_task_head_list(tp);
 		k++;
-		//printf("k = %d\n", k);
+		//LOG("k = %d\n", k);
 		s = tp;
 		while (s) {
 			x = s -> t;
 			if ((x % base) == 0) {
-				//printf("HC found, t = %d, id = %d\n", x, s -> id);
+				//LOG("HC found, t = %d, id = %d\n", x, s -> id);
 				new_s.s = s -> t;
 				new_s.id = s -> id;
 				hc = add_hc_ele(hc, new_s, base);
@@ -976,13 +976,13 @@ void print_hc_list(s_t * list)
 	s_t *hc, * item = list;
 	int i = 1;
 
-	printf("\nHarmonic Chains:\n");
+	LOG("\nHarmonic Chains:\n");
 
 	while (item) {
 		hc = item;
-		printf("hc(%d):\n", i);
+		LOG("hc(%d):\n", i);
 		while (hc) {
-			printf("%d\t%.1f\n", hc -> id, hc -> s);
+			LOG("%d\t%.1f\n", hc -> id, hc -> s);
 			hc = (s_t *) hc -> list;
 		}
 		item = (s_t *) item -> next;

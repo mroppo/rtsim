@@ -639,7 +639,7 @@ sched_event_t * del_sched_event_from_list(sched_event_t * list, int id)
 			free(next);
 		}
 	}
-	// printf("Deleted sched_event %d\n", id);
+	// LOG("Deleted sched_event %d\n", id);
 	return list;
 }
 
@@ -722,7 +722,7 @@ sched_event_t * del_sched_event_task_resource_from_list(sched_event_t * list, ta
 		}
 
 	}
-	// printf("Deleted sched_event %d\n", id);
+	// LOG("Deleted sched_event %d\n", id);
 	return list;
 }
 
@@ -764,16 +764,16 @@ void print_sched_event_list(sched_event_t * list)
 	task_set_t *task;
 	processor_t *proc;
 
-	printf("Scheduling events list:\n");
+	LOG("Scheduling events list:\n");
 
 	while (item) {
 		task = item -> task;
 		proc = item -> processor;
 		if (proc)
-			printf("sched_event %d, event %d, time %d, task id %d, priority %d, processor %d\n",  \
+			LOG("sched_event %d, event %d, time %d, task id %d, priority %d, processor %d\n",  \
                item -> id, item ->t_event, item -> time, task -> id, item -> p, item -> processor->id);
 		else
-			printf("sched_event %d, event %d, time %.2f, task id %d, priority %.2f\n",  \
+			LOG("sched_event %d, event %d, time %.2f, task id %d, priority %.2f\n",  \
                item -> id, item ->t_event, item -> time, task -> id, item -> p);
 
 		item = (sched_event_t *) item -> next;

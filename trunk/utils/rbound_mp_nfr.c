@@ -80,19 +80,19 @@ float r;                           /* period ratio */
    processor_t *current_processor, *first_processor;
 
    /*if (argc != 3) {
-     fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+     LOG("You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return;
    }*/
 
    no_proc = nproc;
    if (no_proc < 0) {
-      fprintf(stderr,"Error: number of processor must be >= 0 (%s)\n", no_proc);
+      LOG("Error: number of processor must be >= 0 (%s)\n", no_proc);
       return NULL;
    }
 
    in_file = fopen(file, "r");
    if (in_file == NULL) {
-      fprintf(stderr,"Error:Unable to open %s file\n", file);
+      LOG("Error:Unable to open %s file\n", file);
       return NULL;
    }
 
@@ -113,34 +113,34 @@ float r;                           /* period ratio */
 	 new_task.c= (double) wcet;
 	new_task.f = (double) phase;
          t = add_task_list_t_sorted(t, new_task);
-         // printf("added task %d =\t%.2f\t%.2f\n", new_task.id, new_task.t, new_task.c);
+         // LOG("added task %d =\t%.2f\t%.2f\n", new_task.id, new_task.t, new_task.c);
      }
    }
 
    if (!n) {
-      fprintf(stderr,"Error: empty file %s\n", file);
+      LOG("Error: empty file %s\n", file);
       return;
    }
-//    printf("No of tasks = %d\n", n);
+//    LOG("No of tasks = %d\n", n);
 //    print_task_list(t);
 
     /*
      * Get System's Utilization
      */
 
-   // printf("\nTask's utilization:\n");
+   // LOG("\nTask's utilization:\n");
    util = 0.0;
    task = t;
    while (task) {
       util += task -> c/task -> t;     /* Ui = Ci/Ti  */
-      // printf("u(%d) = %f\n", task -> id, task -> c/task -> t);
+      // LOG("u(%d) = %f\n", task -> id, task -> c/task -> t);
       task = (task_set_t *) task -> next;
    }
-//    printf("\nTotal utilization of task set = %f\n", util);
+//    LOG("\nTotal utilization of task set = %f\n", util);
 //    if (no_proc)
-//       printf("\nTotal utilization of multiprocessor system = %f\n\n", util/no_proc);
+//       LOG("\nTotal utilization of multiprocessor system = %f\n\n", util/no_proc);
 //    else
-//       printf("\n");
+//       LOG("\n");
 
    /*
       Apply ScaleTaskSet algorithm
@@ -167,7 +167,7 @@ float r;                           /* period ratio */
    if (task && !task -> next)                                  /* add last tak wihtouth transform it */
       tp = add_task_list_t_sorted(tp, *task);
 
-//    printf("\nTransformed task set:\n");
+//    LOG("\nTransformed task set:\n");
 //    print_task_list(tp);
 
    r = last_task.t / tp -> t;
@@ -189,7 +189,7 @@ float r;                           /* period ratio */
    task = tp;                          /* assign tasks to processors */
    while (task) {
       util = current_processor -> u  + task -> c / task -> t;         /* check if task can be assigned to current processor */
-      // printf("checking processor %d\n", current_processor -> id);
+      // LOG("checking processor %d\n", current_processor -> id);
       if (current_processor -> n) {
         first_task = current_processor -> task;   /* the first task assigned to current processor */
         r = task -> t / first_task -> t;
@@ -197,16 +197,16 @@ float r;                           /* period ratio */
       } else {
          bound = 1;
       }
-      // printf("bound = %.4f\n", bound);
+      // LOG("bound = %.4f\n", bound);
       if (util <= bound) {
          current_processor -> u = util;
          current_processor -> n++;
-         // printf("current processor -> %d\n", current_processor -> id);
+         // LOG("current processor -> %d\n", current_processor -> id);
          new_task.id = task -> id;
          new_task.c = task -> c;
          new_task.t = task -> t;
          current_processor -> task = add_task_list_t_sorted(current_processor -> task, new_task);
-         // printf("task %d added to processor %d\n", task -> id, current_processor -> id);
+         // LOG("task %d added to processor %d\n", task -> id, current_processor -> id);
          task = (task_set_t *) task -> next;
       } else {                             /* try to assign task to first processor */
          use_empty_processor = 1;
@@ -221,18 +221,18 @@ float r;                           /* period ratio */
              if (util <= bound) {
                 first_processor -> u = util;
                 first_processor -> n++;
-                // printf("current processor -> %d\n", current_processor -> id);
+                // LOG("current processor -> %d\n", current_processor -> id);
                 new_task.id = task -> id;
                 new_task.c = task -> c;
                 new_task.t = task -> t;
                 first_processor -> task = add_task_list_t_sorted(first_processor -> task, new_task);
-                // printf("task %d added to processor %d\n", task -> id, current_processor -> id);
+                // LOG("task %d added to processor %d\n", task -> id, current_processor -> id);
                 task = (task_set_t *) task -> next;
                 use_empty_processor = 0;
              }
          }
          if (use_empty_processor) {      /* otherwise, use an empty (new) processor */
-            // printf("\nUsing new processor\n");
+            // LOG("\nUsing new processor\n");
             m++;                                               /* current processor */
             new_processor.id = m;                              /* create first processor */
             new_processor.u = 0.0;
@@ -244,18 +244,18 @@ float r;                           /* period ratio */
          }
       }
    }
-//    printf("Task assigned to %d processors:\n", m);
+//    LOG("Task assigned to %d processors:\n", m);
 //    print_processor_list(p);
    if (no_proc) {
       if (m <= no_proc) {
-	 printf("%d", m);
+	 LOG("%d", m);
 	 return p;
       } else {
-	 printf("%d", 0);
+	 LOG("%d", 0);
 	 return NULL;
       }
    } else {
-      printf("%d", m);
+      LOG("%d", m);
       return p;
    }
    return NULL;
@@ -264,7 +264,7 @@ float r;                           /* period ratio */
 processor_t*  start_rbound_mp_nfr_main(int argc, char *argv[] )
 {
    if (argc != 3) {
-     fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+     LOG("You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return NULL;
    }
 	return start_rbound_mp_nfr(atoi(argv[1]), argv[2]);

@@ -81,19 +81,19 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
    float s, beta;
 
    /*if (argc != 3) {
-     fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+     LOG("You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return;
    }*/
 
    no_proc = nproc;
    if (no_proc < 0) {
-      fprintf(stderr,"Error: number of processor must be >= 0 (%s)\n", no_proc);
+      LOG("Error: number of processor must be >= 0 (%s)\n", no_proc);
       return NULL;
    }
 
    in_file = fopen(file, "r");
    if (in_file == NULL) {
-      fprintf(stderr,"Error:Unable to open %s file\n", file);
+      LOG("Error:Unable to open %s file\n", file);
       return NULL;
    }
 
@@ -115,34 +115,34 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
 	 new_task.f = (double) phase;
          new_task.s = log10(new_task.t)/log10(2)  - floor( log10(new_task.t)/log10(2) );  /* get Si */
          t = add_task_list_s_sorted(t, new_task);                                      /* sort tasks by Si  */
-         //printf("added task %d =\t%.2f\t%.2f\t%.4f\n", new_task.id, new_task.t, new_task.c, new_task.s);
+         //LOG("added task %d =\t%.2f\t%.2f\t%.4f\n", new_task.id, new_task.t, new_task.c, new_task.s);
      }
    }
 
    if (!n) {
-      fprintf(stderr,"Error: empty file %s\n", file);
+      LOG("Error: empty file %s\n", file);
       return;
    }
-//    printf("No of tasks = %d\n", n);
+//    LOG("No of tasks = %d\n", n);
 //    print_task_list(t);
 
     /*
      * Get System's Utilization
      */
-   // printf("\nTask's utilization:\n");
+   // LOG("\nTask's utilization:\n");
    util = 0.0;
 
    task = t;
    while (task) {
       util += task -> c/task -> t;     /* Ui = Ci/Ti  */
-      // printf("u(%d) = %f\n", task -> id, task -> c/task -> t);
+      // LOG("u(%d) = %f\n", task -> id, task -> c/task -> t);
       task = (task_set_t *) task -> next;
    }
-//    printf("\nTotal utilization of task set = %f\n", util);
+//    LOG("\nTotal utilization of task set = %f\n", util);
 //    if (no_proc)
-//       printf("\nTotal utilization of multiprocessor system = %f\n\n", util/no_proc);
+//       LOG("\nTotal utilization of multiprocessor system = %f\n\n", util/no_proc);
 //    else
-//       printf("\n");
+//       LOG("\n");
 
    /*
     * Apply RM-ST algorithm
@@ -161,7 +161,7 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
    task = t;                          /* assign tasks to processors */
    while (task) {
       util = current_processor -> u  + task -> c / task -> t;         /* check if task can be assigned to current processor */
-      // printf("\nUtil current processor %d = %.4f\n", current_processor -> id, util);
+      // LOG("\nUtil current processor %d = %.4f\n", current_processor -> id, util);
 
       if (current_processor -> n) {
          beta = task -> s - s;
@@ -173,20 +173,20 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
          bound = 1;              /* it is an empty processor */
       }
 
-      // printf("bound = %.4f\n", bound);
+      // LOG("bound = %.4f\n", bound);
       if (util <= bound) {
          current_processor -> u = util;
          current_processor -> n++;
-         // printf("current processor -> %d\n", current_processor -> id);
+         // LOG("current processor -> %d\n", current_processor -> id);
          new_task.id = task -> id;
          new_task.c = task -> c;
          new_task.t = task -> t;
          current_processor -> task = add_task_list(current_processor -> task, new_task);
-         // printf("task %d assigned to processor %d\n", task -> id, current_processor -> id);
+         // LOG("task %d assigned to processor %d\n", task -> id, current_processor -> id);
          s = task -> s;
          task = (task_set_t *) task -> next;
       } else {                          /* otherwise, use an empty (new) processor */
-         // printf("\nUsing new processor\n");
+         // LOG("\nUsing new processor\n");
          m++;                                               /* current processor */
          new_processor.id = m;                              /* create first processor */
          new_processor.u = 0.0;
@@ -197,18 +197,18 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
          current_processor = get_processor_pointer(p, m);
       }
    }
-//    printf("Task assigned to %d processors:\n", m);
+//    LOG("Task assigned to %d processors:\n", m);
 //    print_processor_list(p);
    if (no_proc) {
       if (m <= no_proc) {
-	 printf("%d", m);
+	 LOG("%d", m);
 	 return p;
       } else {
-	 printf("%d", 0);
+	 LOG("%d", 0);
 	 return NULL;
       }
    } else {
-      printf("%d", m);
+      LOG("%d", m);
       return p;
    }
    return NULL;
@@ -217,7 +217,7 @@ double bound;                      /* schedulability bound (Liu and Layland)  */
 processor_t*  start_rm_st_main(int argc, char *argv[] )
 {
    if (argc != 3) {
-     fprintf(stderr,"You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
+     LOG("You must supply the number of processors ( 0 = infinite ), and a file name with the task set parameters (see README file for details)\n");
      return NULL;
    }
 

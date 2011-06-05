@@ -1,8 +1,14 @@
 REALTSS_SIMULATOR=Simulador de Algoritmos de Planificacion en Tiempo Real
 NOT_FILE_SELECTED=No se ha seleccionado algun archivo
 NEW=Nuevo
+SETTINGS_MENU=Configuracion
+SCHEDULER_SETTINGS=Configuracion Planificador
+VIEW_MENU=Vista
+RUN_MENU=Ejecutar
 OPEN=Abrir
 SAVE=Guardar
+SAVE_AS=Guardar como..
+PRINT=Imprimir
 FILE=Archivo
 HELP=Ayuda
 ABOUT_REALTSS=Acerca de RealTSS
@@ -13,6 +19,12 @@ SIMULATION_MENU=Simulacion
 BUILD_MENU=Simulacion
 TOOLS_MENU=Herramientas
 ALGORITHMS_MENU=Algoritmos
+SIMULATION_TYPE=Tipo de Simulacion
+SCHEDULER_ALGORITHMS=Algoritmo de Planificador
+SHARED_RESOURCES=Recursos Compartidos
+BUILD_MENU=Construir
+NO_PROCESSORS_MENU=No. de Procesadores
+PREFERENCES_MENU=Preferencias
 #
 SAVE_SUCCESSFUL=Se llevo a cabo la grabacion con exito
 NOT_FILE_SELECTED=No hubo algun archivo que se selecciono
@@ -33,7 +45,10 @@ DELETE=Borrar
 SIMULATION=Simular
 FEASIBILITY_TEST=Prueba de Eficacia
 EXECUTION_TRACE=Trazo de la ejecucion
+SIMULATION_TIME=Tiempo de Simulacion
 RESULTS=Resultados
+SIMULATE=Simular
+OPEN_KIWI=Abrir Trace en Kiwi
 TASKS=Tareas
 RESOURCES=Recursos
 TIME=Tiempo
@@ -58,6 +73,17 @@ RESOURCES_TIME=Tiempo
 RESOURCES_ID=No. del recurso
 RESOURCES_TASK=No de la tarea
 RESOURCES_TIME=Tiempo
+#
+ABBREVIATION_TASK_ID=ID
+ABBREVIATION_TASK_PHASE=T.F.
+ABBREVIATION_TASK_EXECUTION=T.E.
+ABBREVIATION_TASK_PERIOD=T.P.
+ABBREVIATION_TASK_DEADLINE=T.D.
+ABBREVIATION_TASK_PERIODIC=T.PA.
+ABBREVIATION_TASK_PRIORITY=T.PTY.
+#
+WINDOW_DIALOG_EXTENSION_TXT=Archivos de Texto
+WINDOW_DIALOG_EXTENSION_RTS=Archivos de RealTSS
 /
 
 ##Este archivo contiene el lenguaje indicado en el nombre de este mismo, para el cual sera llamado dependiendo

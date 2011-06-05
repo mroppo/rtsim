@@ -190,7 +190,7 @@ processor_t * del_processor_list(processor_t * list, int id)
 			free(next);
 		}
 	}
-	// printf("Deleted processor %d\n", id);
+	// LOG("Deleted processor %d\n", id);
 	return list;
 }
 
@@ -229,11 +229,11 @@ void print_processor_list(processor_t * list)
 	processor_t * item = list;
 	task_set_t *task;
 
-	printf("Processors used (processor id, status (0=idle), utilization, no of tasks):\n");
+	LOG("Processors used (processor id, status (0=idle), utilization, no of tasks):\n");
 
 	while (item) {
 		task = item -> task;
-		printf("processor %d, %d, %.2f, %d\n", item -> id, item -> status, item -> u, item -> n);
+		LOG("processor %d, %d, %.2f, %d\n", item -> id, item -> status, item -> u, item -> n);
 		item = (processor_t *) item -> next;
 	}
 }

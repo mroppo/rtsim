@@ -1766,6 +1766,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\utils\logger.c"
+					>
+				</File>
+				<File
 					RelativePath="..\include\processor.h"
 					>
 				</File>
@@ -1819,6 +1823,10 @@
 				</File>
 				<File
 					RelativePath="..\include\rm_bf_ll.h"
+					>
+				</File>
+				<File
+					RelativePath="..\utils\rm_exactAudsley.c"
 					>
 				</File>
 				<File

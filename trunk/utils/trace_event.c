@@ -39,9 +39,9 @@ void print_trace_list(trace_event* list)
 	trace_event* event;
 
 	event = list;
-	printf("\nTrace Info\n");
+	LOG("\nTrace Info\n");
 	while (event) {
-		printf("time: %d\t\t task: %d\t\t event: %s\n", event->time, event->task, event_name[event->t_event]);
+		LOG("time: %d\t\t task: %d\t\t event: %s\n", event->time, event->task, event_name[event->t_event]);
 		event = (trace_event*) (event->next);
 	}
 
@@ -89,7 +89,7 @@ char trace_event_line[MAX_LINE];
 int open_file(char *path)
 {
 	if (trace_event_file != 0) {
-		printf("\n**warning previos file is open\n");
+		LOG("\n**warning previos file is open\n");
 	}
 	trace_event_file = 0;
 	//open file for write text

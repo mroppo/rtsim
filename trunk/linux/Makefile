@@ -34,7 +34,8 @@ objects = $(UTILS_DIR)/task_lists.o\
 	$(UTILS_DIR)/edf_nf.o\
 	$(UTILS_DIR)/edf_ff.o\
 	$(UTILS_DIR)/edf_bf.o\
-	$(UTILS_DIR)/edf_wf.o
+	$(UTILS_DIR)/edf_wf.o\
+	$(UTILS_DIR)/logger.o
 
 app = $(objects) $(schedulers) main
 #includes = $(INCLUDE_DIR)/task.h $(INCLUDE_DIR)/processor.h $(INCLUDE_DIR)/sched_event.h
