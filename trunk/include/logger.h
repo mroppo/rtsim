@@ -32,8 +32,7 @@
 #define DBG dbg
 
 
-
-
+extern void init_logger();
 extern void logger(const char* fmt, ...);
 extern void dbg(const char* fmt, ...);
 

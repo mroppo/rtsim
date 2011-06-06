@@ -26,25 +26,36 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "../include/logger.h"
-
+void init_logger()
+{
+	//clean logs file
+	FILE* file = fopen("logs.txt", "w");
+	if(file)
+	{
+		fprintf(file, "\n");
+		fclose(file);
+	}
+	DBG("init logger");
+}
 
 void logger(const char* fmt, ...)
 {
-    char str[5*1024];
-    va_list arg_list;
+	char str[5*1024];
+	va_list arg_list;
+	
+	va_start(arg_list, fmt);
+	vsprintf(str, fmt, arg_list);
 
-    va_start(arg_list, fmt);
-    vsprintf(str, fmt, arg_list);
-
-    //printf("%s", str);
 	fprintf(stderr, "%s", str);
+	printf("%s", str);
+	
 //#ifdef DEBUG_IN_FILE
- //   FILE* file = fopen("dbg.txt", "a+");
-	//if(file)
-	//{
-	//	fprintf(file, "%s", str);
-	//	fclose(file);
-	//}
+	FILE* file = fopen("logs.txt", "a+");
+	if(file)
+	{
+		fprintf(file, "%s", str);
+		fclose(file);
+	}
 //#endif
 }
 
@@ -52,10 +63,10 @@ void logger(const char* fmt, ...)
 void dbg(const char* fmt, ...)
 {
 	char str[5*1024];
-    va_list arg_list;
+	va_list arg_list;
+	
+	va_start(arg_list, fmt);
+	vsprintf(str, fmt, arg_list);
 
-    va_start(arg_list, fmt);
-    vsprintf(str, fmt, arg_list);
-
-    logger("%s", str);
+	logger("%s", str);
 }

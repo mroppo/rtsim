@@ -409,7 +409,7 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 				puts "simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
         			set r [catch {eval simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
-				set r [catch { insertResultsBox [getResultsBoxFrame] "Error"  } errmsg]
+				set r [catch { cargarLog [getResultsBoxFrame] } errmsg]
 
 				if {$r} {
 					tk_messageBox -icon error -title "Error" -message $errmsg
@@ -450,20 +450,26 @@ proc deleteResultsBox { frameParent } {
 	
 }
 
-proc insertResultsBox { frameParent results} {
+proc cargarLog { frameParent } {
 
 #Open file...
-	set archName "log.txt" ;	#Name is fixed... realtss.ini
+	set archName "logs.txt" ;	#Name is fixed... realtss.ini
 	set archExist [file exists $archName]
+	$frameParent.trace.textoTrace insert end "Cargando archivo...\n"
 	if {$archExist > 0} {
 		set arch [open $archName { RDWR CREAT } ]
 		set tipo 0
 		while { [gets $arch line ] >= 0} {
-			$frameParent.trace.textoTrace insert end $line
-    	}
+			$frameParent.trace.textoTrace insert end $line\n
+    		} 
 		close $arch
+	} else {
+		$frameParent.trace.textoTrace insert end "No se encontro el archivo."
 	}
-	
+}
+
+proc insertResultsBox { frameParent result} {
+	$frameParent.trace.textoTrace insert end $result\n
 }
 
 proc newSetTasks {frameTasksEntrys frameResultsBox } {

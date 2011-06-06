@@ -88,6 +88,7 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 	}
 
 
+	init_logger();
 #ifdef SCHED_GLOBAL
 	parameters.algorithm	= RM;
 	parameters.mode			= MODE_GLOBAL;
@@ -161,7 +162,7 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 		res = start_rm_main(parameters);
 		//res = simulator_main(objc, strings);
 
-	LOG("\n end main: %d",res);
+	DBG("\n end main: %d",res);
 	return res;
 }
 
