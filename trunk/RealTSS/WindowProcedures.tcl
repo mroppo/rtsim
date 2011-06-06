@@ -409,11 +409,12 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 				puts "simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
         			set r [catch {eval simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
-				set r [catch { insertResultsBox [getResultsBoxFrame] $resultAlg  } errmsg]
+				set r [catch { insertResultsBox [getResultsBoxFrame] "Error"  } errmsg]
 
 				if {$r} {
 					tk_messageBox -icon error -title "Error" -message $errmsg
 				}
+				
 				
 				
 				
@@ -450,7 +451,19 @@ proc deleteResultsBox { frameParent } {
 }
 
 proc insertResultsBox { frameParent results} {
-	$frameParent.trace.textoTrace insert end $results
+
+#Open file...
+	set archName "log.txt" ;	#Name is fixed... realtss.ini
+	set archExist [file exists $archName]
+	if {$archExist > 0} {
+		set arch [open $archName { RDWR CREAT } ]
+		set tipo 0
+		while { [gets $arch line ] >= 0} {
+			$frameParent.trace.textoTrace insert end $line
+    	}
+		close $arch
+	}
+	
 }
 
 proc newSetTasks {frameTasksEntrys frameResultsBox } {
