@@ -79,6 +79,8 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 	char* strings[255];
 	int t = 0;
 	ALGORITHM_PARAMS parameters;
+
+	init_logger();
 	
 	DBG("\n called with %d arguments\n", objc);
 	for(t=0;t<objc;t++)
@@ -88,7 +90,6 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 	}
 
 
-	init_logger();
 #ifdef SCHED_GLOBAL
 	parameters.algorithm	= RM;
 	parameters.mode			= MODE_GLOBAL;
@@ -1051,26 +1052,25 @@ int start_rm_main(ALGORITHM_PARAMS parameters)
 	mode = parameters.mode;//atoi(argv[argid+PARAM_MODE]);
 	if (mode < 0 || mode >= MODE_COUNT) {
 		LOG( "Error: invalid mode, use 0 for global or 1 for partial %d\n", mode);
-DBG("error mode\n");
 		return -1;
 	}
-DBG("error mode\n");	
+
 	no_proc = parameters.processor;//atoi(argv[argid+PARAM_NOPROC]);
 	if (no_proc <= 0) {
 		LOG( "Error: number of processor must be > 0 (%s)\n", no_proc);	
 		return -1;
 	}
-DBG("error mode\n");	
+
 	max_time = (double) parameters.time;//atoi(argv[argid + PARAM_MAXTIME]);
 	if (max_time < 0) {
 		LOG( "Error: simulation time must be >= 0 (%s)\n", max_time); //argv[argid + PARAM_MAXTIME]);
 		return -1;
 	}
-DBG("error mode\n");	
+
 	//in_file = fopen(argv[argid + PARAM_FILE], "r");
 	in_file = fopen(parameters.data, "r");
 	if (in_file == NULL) {
-		LOG( "Error:Unable to open %s file\n", parameters.data);//argv[argid + PARAM_FILE]);
+		LOG( "Error: Unable to open %s file\n", parameters.data);//argv[argid + PARAM_FILE]);
 		return -1;
 	}
 	/////////////////////////////////////////////////////////////////////////////////////

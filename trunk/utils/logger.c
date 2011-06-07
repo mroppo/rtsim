@@ -32,10 +32,10 @@ void init_logger()
 	FILE* file = fopen("logs.txt", "w");
 	if(file)
 	{
-		fprintf(file, "\n");
+		fprintf(file, " \n");
 		fclose(file);
 	}
-	DBG("init logger");
+	DBG("init logger \n");
 }
 
 void logger(const char* fmt, ...)
