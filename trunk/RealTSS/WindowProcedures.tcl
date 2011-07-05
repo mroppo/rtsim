@@ -466,7 +466,7 @@ proc cargarLog { frameParent } {
     		} 
 		close $arch
 	} else {
-		$frameParent.trace.textoTrace insert end "No se encontro el archivo."
+		$frameParent.trace.textoTrace insert end [searchCommand CANT_LOAD_LOG]
 	}
 }
 
