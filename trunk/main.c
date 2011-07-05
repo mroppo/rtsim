@@ -55,31 +55,39 @@ static int SimulatorCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc
 	int res =     TCL_OK;
 	char* strings[255];
 	int t = 0;
-	LOG("\n called with %d arguments\n", objc);
+
+	DBG("\n cleaning log...");
+	init_logger();
+
+	DBG("\n called with %d arguments", objc);
 
 	for(t=0;t<objc;t++)
 	{
-		LOG("\n%d: %s",t, (*objv[t]).bytes);
+		DBG("\n    %d: %s",t, (*objv[t]).bytes);
 		strings[t] = (*objv[t]).bytes;
 	}
 	res = simulator_main(objc, strings);
 
-	LOG("\n end main: %d",res);
+	DBG("\n SimulatorCmd end: %d",res);
 	return res;
 }
 
+#define TCL_COMMAND_NAME "simulator"
+// example: set r [catch {eval TCL_COMMAND_NAME $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+
 int Simulator_Init(Tcl_Interp *interp)
 {
-	LOG("\nSimulator_Init");
+
+LOG("\nSimulator_Init");
 	//ClientData data;
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 		return TCL_ERROR;
     }
-    LOG("\ncreating simulator command");
-    Tcl_CreateObjCommand(interp, "simulator", SimulatorCmd, NULL, NULL);
-    Tcl_PkgProvide(interp, "simulator", "1.1");
+LOG("\nCreating TCL command: [%s]",TCL_COMMAND_NAME);
+    Tcl_CreateObjCommand(interp, TCL_COMMAND_NAME, SimulatorCmd, NULL, NULL);
+    Tcl_PkgProvide(interp, TCL_COMMAND_NAME, "1.1");
 
-	return TCL_OK;
+    return TCL_OK;
 }
 
 
@@ -97,12 +105,13 @@ int main(int argc, char *argv[])
 	//	char*args = argv;
 	int i=0;
 
+/*
 	for(i=0;i<argc;i++)
 	{
 		LOG("\n %d: %s",i,argv[i]);
 	}
 	LOG("\n");
-
+*/
 
 	if (argc > 2) {
 

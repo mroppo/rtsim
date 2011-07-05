@@ -380,7 +380,8 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 	global simulationTime
 #	global pathSavedTrace
 	set resultAlg ""
-	set pathSavedTasks "/home/kary/simulador/RealTSS/test4.txt"
+	#usar siempre test4.txt como ejemplo
+	#set pathSavedTasks "/home/kary/simulador/RealTSS/test4.txt"
 	deleteResultsBox $frameResultsBox
 	
 	if { $algorithmProcedure != "" } {
@@ -409,7 +410,7 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 
 				puts "COMMAND_NAME $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
-        			set r [catch {eval rm $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+        			set r [catch {eval simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
 				set r [catch { cargarLog [getResultsBoxFrame] } errmsg]
 
 				if {$r} {
@@ -456,7 +457,7 @@ proc cargarLog { frameParent } {
 #Open file...
 	set archName "logs.txt" ;	#Name is fixed... realtss.ini
 	set archExist [file exists $archName]
-	$frameParent.trace.textoTrace insert end "Cargando archivo...\n"
+	#$frameParent.trace.textoTrace insert end "Cargando archivo...\n"
 	if {$archExist > 0} {
 		set arch [open $archName { RDWR CREAT } ]
 		set tipo 0

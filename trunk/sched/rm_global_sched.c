@@ -71,7 +71,7 @@ typedef enum
 }RM_PARAMS;
 
 
-
+/*
 #ifdef SIMLUATOR_LIB_TCL
 static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, Tcl_Obj* const objv[]) 
 {
@@ -171,7 +171,7 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 }
 
 //name used for command call from TCL
-#define COMMAND_NAME "RM"
+#define COMMAND_NAME "simulator"
 // example: set r [catch {eval COMMAND_NAME $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
 
 int Rmnfll_Init(Tcl_Interp *interp)
@@ -188,7 +188,7 @@ DBG("\ncreating command [%s]\n",COMMAND_NAME);
 
 return TCL_OK;
 }
-#endif
+#endif*/
 
 #ifdef USE_THREAD
 

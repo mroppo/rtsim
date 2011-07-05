@@ -3,7 +3,7 @@ SCHED_DIR = ../sched
 UTILS_DIR = ../utils
 INCLUDE_DIR = ../include
 DATA_DIR = $(MAIN_DIR)/data
-
+LIB_DIR=./../RealTSS/AlgorithmsLibraries
 CC_OPT = -lpthread
 APP_NAME=simulator
 
@@ -43,13 +43,16 @@ includes = $(INCLUDE_DIR)/*.h
 
 all : $(app) $(so)
 
-so: $(objects) $(includes)
+so: $(objects) $(schedulers) $(includes)
+	gcc $(MAIN_DIR)/main.c $(objects) $(schedulers) -shared -o $(LIB_DIR)/libsimulator.so -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+	echo ........... full simulator lib end ..........................
+
 # compile rm global sched
 	#gcc $(SCHED_DIR)/rm_global_sched.c $(objects) -shared -o ./../RealTSS/AlgorithmsLibraries/libRM_Global.so -DSCHED_GLOBAL -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
 	#echo .....................................
 # compile rm partial NF LL
-	gcc $(SCHED_DIR)/rm_global_sched.c $(objects) -shared -o ./../RealTSS/AlgorithmsLibraries/librmnfll.so -DSCHED_PARTIAL_NF_LL -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
-	echo ...........end compilation..........................
+	#gcc $(SCHED_DIR)/rm_global_sched.c $(objects) -shared -o ./../RealTSS/AlgorithmsLibraries/librmnfll.so -DSCHED_PARTIAL_NF_LL -DUSE_TCL_STUBS -DSIMLUATOR_LIB_TCL -I/usr/include/tcl8.5 -L/usr/lib -ltclstub8.5 -lm $(CC_OPT)
+#echo ...........end compilation..........................
 
 
 main : $(schedulers) $(objects) $(includes)
