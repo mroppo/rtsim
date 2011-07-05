@@ -46,8 +46,8 @@ void logger(const char* fmt, ...)
 	va_start(arg_list, fmt);
 	vsprintf(str, fmt, arg_list);
 
-	fprintf(stderr, "%s", str);
-	printf("%s", str);
+	//fprintf(stderr, "%s", str);
+	//printf("%s", str);
 	
 //#ifdef DEBUG_IN_FILE
 	FILE* file = fopen("logs.txt", "a+");
@@ -68,5 +68,5 @@ void dbg(const char* fmt, ...)
 	va_start(arg_list, fmt);
 	vsprintf(str, fmt, arg_list);
 
-	logger("%s", str);
+	printf("%s", str);
 }

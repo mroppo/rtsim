@@ -380,6 +380,7 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 	global simulationTime
 #	global pathSavedTrace
 	set resultAlg ""
+	set pathSavedTasks "/home/kary/simulador/RealTSS/test4.txt"
 	deleteResultsBox $frameResultsBox
 	
 	if { $algorithmProcedure != "" } {
@@ -406,9 +407,9 @@ proc simulate { pathSavedTasks algorithmProcedure algorithmSelected frameResults
 				#set r [catch { insertResultsBox [getResultsBoxFrame] $resultAlg  } errmsg]
 
 
-				puts "simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
+				puts "COMMAND_NAME $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks"
         				
-        			set r [catch {eval simulator $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+        			set r [catch {eval rm $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
 				set r [catch { cargarLog [getResultsBoxFrame] } errmsg]
 
 				if {$r} {

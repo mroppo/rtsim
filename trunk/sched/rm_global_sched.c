@@ -80,14 +80,17 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 	int t = 0;
 	ALGORITHM_PARAMS parameters;
 
+	DBG("\n cleaning log...");
 	init_logger();
 	
-	DBG("\n called with %d arguments\n", objc);
+	DBG("\n called with %d arguments", objc);
 	for(t=0;t<objc;t++)
 	{
 		DBG("\n%d: %s",t, (*objv[t]).bytes);
 		strings[t] = (*objv[t]).bytes;
 	}
+
+	DBG("\n");
 
 
 #ifdef SCHED_GLOBAL
@@ -167,17 +170,21 @@ static int RmnfllCmd(ClientData clientData, Tcl_CmdDeleteProc* proc, int objc, T
 	return res;
 }
 
+//name used for command call from TCL
+#define COMMAND_NAME "RM"
+// example: set r [catch {eval COMMAND_NAME $algorithmSelected $numberProcessors $simulationTime $pathSavedTasks } errmsg]
+
 int Rmnfll_Init(Tcl_Interp *interp)
 {
-DBG("\nrmffll_Init");
+DBG("\nrmffll_Init TCL v[%s]", TCL_VERSION);
 	//ClientData data;
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 DBG("\nerror ");
 	return TCL_ERROR;
     }
-DBG("\ncreating simulator command");
-    Tcl_CreateObjCommand(interp, "simulator", RmnfllCmd, NULL, NULL);
-    Tcl_PkgProvide(interp, "simulator", "1.1");
+DBG("\ncreating command [%s]\n",COMMAND_NAME);
+    Tcl_CreateObjCommand(interp, COMMAND_NAME, RmnfllCmd, NULL, NULL);
+    Tcl_PkgProvide(interp, COMMAND_NAME, "1.1");
 
 return TCL_OK;
 }
@@ -253,7 +260,7 @@ int start_rm(int mode, int no_proc, double max_time, task_set_t *t, char* outfil
 	///////////////////////////////
 #endif
 
-
+	DBG("\n start rm simulator");
 
 	strcpy(basename_trace, outfile);
 	
