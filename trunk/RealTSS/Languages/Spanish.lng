@@ -26,6 +26,7 @@ BUILD_MENU=Construir
 NO_PROCESSORS_MENU=No. de Procesadores
 PREFERENCES_MENU=Preferencias
 #
+CANT_LOAD_LOG=No se encontro el archivo de log
 SAVE_SUCCESSFUL=Se llevo a cabo la grabacion con exito
 NOT_FILE_SELECTED=No hubo algun archivo que se selecciono
 NOT_TASKS=No hay tareas que almacenar

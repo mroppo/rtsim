@@ -26,6 +26,7 @@ BUILD_MENU=Build
 NO_PROCESSORS_MENU=No. of Processors
 PREFERENCES_MENU=Preferences
 #
+CANT_LOAD_LOG=Log file not found
 SAVE_SUCCESSFUL=The tasks were saves successfully
 NOT_FILE_SELECTED=There were not a file selected
 NOT_TASKS=There are not tasks for save

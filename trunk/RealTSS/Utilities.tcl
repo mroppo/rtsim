@@ -357,6 +357,8 @@ proc leeIni { line } {
 			"language" { set config(language) $valor }
 			"algorithmsName" {set config(algorithmsName) $valor}
 			"languagesContainer" {set config(languagesContainer) $valor}
+			"fulllibfile" {set config(fulllibfile) $valor}
+			"fulllibcommnad" {set config(fulllibcommnad) $valor}
 		}
 	}
 }
@@ -399,6 +401,8 @@ proc initConfig {} {
 	set config(language) "Languages/English.lng"
 	set config(algorithmsName) "Algorithms/Algorithms.conf"
 	set config(languagesContainer) "Languages/Languages.conf"
+	set config(fulllibfile) "libsimulator"
+	set config(fulllibcommnad) "simulator"
 }
 
 ##########################################################################
@@ -530,11 +534,16 @@ proc loadNameAlgorithms { filePath } {
 					## Assign fields to variables and print some out...
 					lassign $fields \
 						ALGORITHM NAME
+						
+					##save algoritm name
 					set AlgorithmsName($idRow,$idCol) $ALGORITHM
 					incr AlgorithmsName(IDCOL)
+					
+					##save value
 					set idCol $AlgorithmsName(IDCOL)
 					set AlgorithmsName($idRow,$idCol) $NAME
 					incr AlgorithmsName(IDCOL)
+					
 					set idCol $AlgorithmsName(IDCOL)
 					incr AlgorithmsName(IDROW)
 					set AlgorithmsName(IDCOL) 0
