@@ -401,8 +401,8 @@ proc initConfig {} {
 	set config(language) "Languages/English.lng"
 	set config(algorithmsName) "Algorithms/Algorithms.conf"
 	set config(languagesContainer) "Languages/Languages.conf"
-	set config(fulllibfile) "libsimulator"
-	set config(fulllibcommnad) "simulator"
+	set config(fulllibfile) libsimulator
+	set config(fulllibcommnad) simulator
 }
 
 ##########################################################################
